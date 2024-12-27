@@ -20,6 +20,11 @@
       return;
     }
 
+    // Don't process if the key pressed is just a modifier key
+    if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) {
+      return;
+    }
+
     currentKeys.clear();
     
     if (e.ctrlKey) currentKeys.add('Ctrl');
