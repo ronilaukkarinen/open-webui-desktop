@@ -27,8 +27,10 @@
 
     currentKeys.clear();
     
-    if (e.ctrlKey) currentKeys.add('Ctrl');
+    // Add modifiers in a consistent order:
+    // Super/Cmd first, then Control, Alt, Shift
     if (e.metaKey) currentKeys.add(navigator.platform.includes('Mac') ? 'Cmd' : 'Super');
+    if (e.ctrlKey) currentKeys.add('Ctrl');
     if (e.altKey) currentKeys.add(navigator.platform.includes('Mac') ? 'Opt' : 'Alt');
     if (e.shiftKey) currentKeys.add('Shift');
 
