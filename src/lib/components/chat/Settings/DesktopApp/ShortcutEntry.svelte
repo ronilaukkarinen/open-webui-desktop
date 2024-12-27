@@ -11,6 +11,21 @@
 
   let currentKeys: Set<string> = new Set();
   let isEditing = false;
+  let displayValue = '';
+
+  const SYMBOL_MAP = {
+    Cmd: '⌘',
+    Ctrl: '⌃', 
+    Shift: '⇧',
+    Opt: '⌥',
+    Alt: '⌥'
+  } as const;
+
+  function updateDisplayValue() {
+    displayValue = Array.from(currentKeys)
+      .map(key => SYMBOL_MAP[key as keyof typeof SYMBOL_MAP] || key)
+      .join('');
+  }
 
   function handleKeyDown(e: KeyboardEvent) {
     e.preventDefault();
@@ -44,13 +59,16 @@
     
     currentKeys.add(key);
     
-    // Update display value
+    // Update internal value with + separator
     value = Array.from(currentKeys).join('+');
+    // Update display value with symbols
+    updateDisplayValue();
   }
 
   function handleKeyUp(e: KeyboardEvent) {
     if (e.key === 'Escape') {
       value = '';
+      displayValue = '';
       currentKeys.clear();
       dispatch('clear');
       e.target?.blur();
@@ -76,7 +94,7 @@
   <input
     type="text"
     {placeholder}
-    {value}
+    value={displayValue}
     readonly
     class="w-full px-3 py-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
     on:keydown={handleKeyDown}
@@ -90,6 +108,7 @@
       class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
       on:click={() => {
         value = '';
+        displayValue = '';
         currentKeys.clear();
         dispatch('clear');
       }}
