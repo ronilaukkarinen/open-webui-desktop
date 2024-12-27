@@ -12,6 +12,7 @@
 	let currentKeys: Set<string> = new Set();
 	let isEditing = false;
 	let displayValue = '';
+	let clearingValue = false;
 
 	const SYMBOL_MAP = {
 		Cmd: '⌘',
@@ -79,10 +80,23 @@
 	}
 
 	function handleBlur() {
-		isEditing = false;
-		if (value) {
-			dispatch('change', value);
+		// Don't save if we're clearing the value
+		if (!clearingValue) {
+			isEditing = false;
+			if (value) {
+				dispatch('change', value);
+			}
 		}
+		clearingValue = false; // Reset the flag
+	}
+
+	function handleClear() {
+		clearingValue = true; // Set flag before clearing
+		value = '';
+		displayValue = '';
+		currentKeys.clear();
+		dispatch('clear');
+		isEditing = false;
 	}
 
 	function handleFocus() {
@@ -106,12 +120,8 @@
 	{#if value && isEditing}
 		<button
 			class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-			on:click={() => {
-				value = '';
-				displayValue = '';
-				currentKeys.clear();
-				dispatch('clear');
-			}}
+			on:click={handleClear}
+			on:mousedown|preventDefault
 		>
 			✕
 		</button>
