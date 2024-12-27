@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	export let value = '';
 	export let placeholder = 'Press Shortcut';
@@ -13,6 +13,26 @@
 	let isEditing = false;
 	let displayValue = '';
 	let clearingValue = false;
+
+	function parseKeybind(keybind: string) {
+		if (!keybind) return;
+		const keys = keybind.split('+');
+		currentKeys.clear();
+		keys.forEach(key => currentKeys.add(key));
+		updateDisplayValue();
+	}
+
+	$: {
+		if (value) {
+			parseKeybind(value);
+		}
+	}
+
+	onMount(() => {
+		if (value) {
+			parseKeybind(value);
+		}
+	});
 
 	const SYMBOL_MAP = {
 		Cmd: '⌘',
