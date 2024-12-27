@@ -18,11 +18,12 @@
 		if (!keybind) return;
 		const keys = keybind.split('+');
 		currentKeys.clear();
-		keys.forEach(key => currentKeys.add(key));
+		keys.forEach((key) => currentKeys.add(key));
 		updateDisplayValue();
 	}
 
 	$: {
+		console.log(value);
 		if (value) {
 			parseKeybind(value);
 		}

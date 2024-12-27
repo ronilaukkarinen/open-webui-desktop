@@ -66,7 +66,9 @@
 				console.debug('App State idempotent change in app, skipping update');
 				return;
 			}
+			console.log('Saving App State to store');
 			await store.set('state', $appState);
+			await store.save();
 		})();
 	} else {
 		console.warn('App State changed in the app, but the Store has not been loaded yet');
@@ -84,7 +86,9 @@
 				console.debug('App Config idempotent change in app, skipping update');
 				return;
 			}
+			console.log('Saving App Config to store');
 			await store.set('config', $appConfig);
+			await store.save();
 		})();
 	} else {
 		console.warn('App Config changed in the app, but the Store has not been loaded yet');

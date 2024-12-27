@@ -3,6 +3,7 @@ import sha256 from 'js-sha256';
 
 import { THEMES, WEBUI_BASE_URL } from '$lib/constants';
 import { TTS_RESPONSE_SPLIT } from '$lib/types';
+import { theme } from '$lib/stores';
 
 //////////////////////////
 // Helper functions
@@ -928,6 +929,16 @@ export const getLineCount = (text) => {
 };
 
 export const applyTheme = (_theme: string) => {
+	theme.set(_theme);
+	localStorage.setItem('theme', _theme);
+	if (_theme.includes('oled')) {
+		document.documentElement.style.setProperty('--color-gray-800', '#101010');
+		document.documentElement.style.setProperty('--color-gray-850', '#050505');
+		document.documentElement.style.setProperty('--color-gray-900', '#000000');
+		document.documentElement.style.setProperty('--color-gray-950', '#000000');
+		document.documentElement.classList.add('dark');
+	}
+
 	let themeToApply = _theme === 'oled-dark' ? 'dark' : _theme;
 
 	if (_theme === 'system') {

@@ -18,8 +18,11 @@
 	import SearchInput from '../layout/Sidebar/SearchInput.svelte';
 	import Search from '../icons/Search.svelte';
 	import { IS_TAURI_DESKTOP } from '$lib/constants';
+	import type { i18n } from 'i18next';
+	import type { Writable } from 'svelte/store';
+	import App from './Settings/DesktopApp.svelte';
 
-	const i18n = getContext('i18n');
+	const i18n: Writable<i18n> = getContext('i18n');
 
 	export let show = false;
 
@@ -51,6 +54,21 @@
 				'languageoptions',
 				'defaultparameters',
 				'systemparameters'
+			]
+		},
+		{
+			id: 'desktop-app',
+			title: 'Desktop App',
+			keywords: [
+				'desktop',
+				'app',
+				'autostart',
+				'auto',
+				'keyboard',
+				'shortcut',
+				'companion',
+				'chat',
+				'reset'
 			]
 		},
 		{
@@ -421,6 +439,32 @@
 								</div>
 								<div class=" self-center">{$i18n.t('General')}</div>
 							</button>
+						{:else if tabId === 'desktop-app'}
+							<button
+								class="px-0.5 py-1 min-w-fit rounded-lg flex-1 md:flex-none flex text-left transition {selectedTab ===
+								'desktop-app'
+									? ''
+									: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
+								on:click={() => {
+									selectedTab = 'desktop-app';
+								}}
+							>
+								<div class=" self-center mr-2">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 16 16"
+										fill="currentColor"
+										class="size-4"
+									>
+										<path
+											fill-rule="evenodd"
+											d="M2 12V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Zm1.5-5.5V12a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V6.5A.5.5 0 0 0 12 6H4a.5.5 0 0 0-.5.5Zm.75-1.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM7 4a.75.75 0 1 1-1.5 0A.75.75 0 0 1 7 4Zm1.25.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+											clip-rule="evenodd"
+										/>
+									</svg>
+								</div>
+								<div class=" self-center">{$i18n.t('Desktop App')}</div>
+							</button>
 						{:else if tabId === 'interface'}
 							<button
 								class="px-0.5 py-1 min-w-fit rounded-lg flex-1 md:flex-none flex text-left transition {selectedTab ===
@@ -612,6 +656,13 @@
 				{#if selectedTab === 'general'}
 					<General
 						{getModels}
+						{saveSettings}
+						on:save={() => {
+							toast.success($i18n.t('Settings saved successfully!'));
+						}}
+					/>
+				{:else if selectedTab === 'desktop-app'}
+					<App
 						{saveSettings}
 						on:save={() => {
 							toast.success($i18n.t('Settings saved successfully!'));
