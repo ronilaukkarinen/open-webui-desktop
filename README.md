@@ -54,16 +54,23 @@ Ensure you have the following installed:
 
 ---
 
+## Features
+
+- **Open WebUI Desktop**: A desktop app with a main window hosting Open WebUI.
+- **Chatbar**: A floating window for chat interactions.
+- **Hotkey Support**: Toggle the chatbar with a customizable hotkey.
+- **Chat Companion**: A persistent, floating window displaying recent chat activity.
+- **Customizable App Settings**:
+  - Global hotkey configuration
+  - Companion chat settings
+  - Chatbar position adjustments
+
 ## Roadmap
 
 The following features and improvements are planned, roughly in order of priority:
 
 1. **Non-local Setup Support**: Enable compatibility with remote backend configurations.
-1. **Full Desktop Integration**: Expand Open WebUI functionality for the desktop.
-1. **Customizable App Settings**:
-   - Global hotkey configuration
-   - Companion chat settings
-   - Chatbar position adjustments
+1. **Full Desktop Integration**: Expand Open WebUI to interact with the computer and its apps.
 1. **Platform-Specific Styling**: Align with design guidelines for macOS, Windows, and Linux (e.g., NSPanel, window effects).
 1. **Distribution**: Package the application for easy distribution.
 1. **Code Modularization**: Refactor large monolithic components shared between the main UI and chatbar into modular components and migrate to TypeScript.

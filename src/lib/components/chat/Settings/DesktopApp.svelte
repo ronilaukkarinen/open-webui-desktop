@@ -11,7 +11,23 @@
 	import { delay } from '$lib/utils';
 	import { isRegistered, unregister } from '@tauri-apps/plugin-global-shortcut';
 
-	const BANNED_SHORTCUTS = ['Cmd+C', 'Cmd+V', 'Cmd+A', 'Cmd+X', 'Cmd+Z', 'Cmd+Shift+Z'];
+	const BANNED_SHORTCUTS = [
+		'cmd+c',
+		'cmd+v',
+		'cmd+a',
+		'cmd+x',
+		'cmd+z',
+		'cmd+shift+z',
+		'cmd+s',
+		'cmd+shift+s',
+		'cmd+backspace',
+		'cmd+shift+backspace',
+		'cmd+q',
+		'cmd+w',
+		'cmd+shift+w',
+		'cmd+f',
+		'cmd+m'
+	];
 
 	const dispatch = createEventDispatcher();
 
@@ -26,12 +42,11 @@
 
 	let keyboardShortcut: string;
 	const keyboardShortcutChangeHandler = async () => {
-		console.log(keyboardShortcut);
 		try {
 			if (keyboardShortcut !== $appConfig.shortcut && (await isRegistered(keyboardShortcut))) {
 				toast.error($i18n.t('Shortcut already in use. Please try another.'));
 				keyboardShortcut = $appConfig.shortcut;
-			} else if (BANNED_SHORTCUTS.includes(keyboardShortcut)) {
+			} else if (BANNED_SHORTCUTS.includes(keyboardShortcut.toLowerCase())) {
 				toast.error($i18n.t('Invalid shortcut. Please try another.'));
 				keyboardShortcut = $appConfig.shortcut;
 			}
@@ -54,10 +69,10 @@
 	const openLinksInAppChangeHandler = () => {};
 
 	const saveConfig = async () => {
-		console.log('Saving settings. Before:', Object.entries($appConfig));
+		console.debug('Saving settings. Before:', Object.entries($appConfig));
 		// sets shortcut and saves to config
 
-		console.log('Right before set:', keyboardShortcut);
+		console.debug('Right before set:', keyboardShortcut);
 		if (keyboardShortcut !== $appConfig.shortcut) {
 			if (keyboardShortcut === '') {
 				await unregister($appConfig.shortcut);
@@ -77,13 +92,11 @@
 		$appConfig.autoLaunch = launchAtLogin;
 		$appConfig.openLinksInApp = openLinksInApp;
 
-		console.log('After:', $appConfig);
+		console.debug('After:', $appConfig);
 		dispatch('save');
 	};
 
 	onMount(async () => {
-		console.log($appConfig);
-
 		positionOnScreen = $appConfig.chatBarPositionPreference;
 		resetToNewChat = $appConfig.resetChatTimePreference;
 		keyboardShortcut = $appConfig.shortcut;
