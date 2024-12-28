@@ -11,6 +11,7 @@ export default defineConfig(async () => ({
 		APP_VERSION: JSON.stringify(process.env.npm_package_version),
 		APP_BUILD_HASH: JSON.stringify(process.env.APP_BUILD_HASH || 'dev-build')
 	},
+	worker: { format: 'es' },
 
 	// Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
 	//

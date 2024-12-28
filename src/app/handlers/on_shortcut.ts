@@ -1,16 +1,15 @@
-import { load } from '@tauri-apps/plugin-store';
+import { getStore } from '@tauri-apps/plugin-store';
 import { Window } from '@tauri-apps/api/window';
 import {
+	APP_STORE_FILE,
 	CHATBAR_WINDOW_LABEL,
 	CHATBAR_WINDOW_SIZE,
 	COMPANION_CHAT_EXPIRED,
-	DEFAULT_CONFIG,
 	DEFAULT_STATE
 } from '../constants';
 import moveChatBar from '../actions/move_chatbar';
 import { resetChatTimePreferenceToSeconds, type AppConfig, type AppState } from '../state';
 import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
-import { tick } from 'svelte';
 
 export default async function onShortcut(event: ShortcutEvent) {
 	console.log('onShortcut');
@@ -18,11 +17,25 @@ export default async function onShortcut(event: ShortcutEvent) {
 		return;
 	}
 
-	// get state
-	const store = await load('app.json', { autoSave: true });
-	let state: AppState = (await store.get('state')) || DEFAULT_STATE;
-	let config: AppConfig = (await store.get('config')) || DEFAULT_CONFIG;
+	// get store
+	const store = await getStore(APP_STORE_FILE);
+	if (!store) {
+		throw new Error('Failed to get store');
+	}
 
+	// get state
+	let state = await store.get<AppState>('state');
+	if (!state) {
+		throw new Error('Failed to get App State');
+	}
+
+	// get config
+	let config = await store.get<AppConfig>('config');
+	if (!config) {
+		throw new Error('Failed to get App Config');
+	}
+
+	// get window
 	const window = await Window.getByLabel(CHATBAR_WINDOW_LABEL);
 	if (!window) {
 		throw new Error('Failed to get chatbar window');
@@ -49,7 +62,8 @@ export default async function onShortcut(event: ShortcutEvent) {
 		await window.setResizable(false);
 		await window.setSize(CHATBAR_WINDOW_SIZE);
 		await moveChatBar(chatBarPosition, companionChatOpen);
-		await tick();
+		// 1/60s delay to allow movement, resizing, state change before it appears
+		await new Promise((resolve) => setTimeout(resolve, 17));
 	} else if (!companionChatOpen) {
 		await moveChatBar(chatBarPosition, companionChatOpen);
 	}

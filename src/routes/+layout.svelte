@@ -43,6 +43,7 @@
 	import { getCurrentWindow, Window } from '@tauri-apps/api/window';
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+	import Draggable from '$lib/components/desktop-app/Draggable.svelte';
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -167,7 +168,9 @@
 			});
 
 			// Load the store
-			store = await load('app.json', { autoSave: true });
+			store = await load('app.json', { autoSave: true, createNew: false });
+
+			console.log('Config right after load:', await store.get('config'));
 
 			// Subscribe to state changes in the store and update the app
 			await store.onKeyChange('state', (state: AppState | undefined) => {
@@ -314,64 +317,9 @@
 			unlistenReopen();
 		};
 	});
-
-	const NON_DRAGGING_TAGS = [
-		'INPUT',
-		'TEXTAREA',
-		'BUTTON',
-		'SELECT',
-		'A',
-		'VIDEO',
-		'AUDIO',
-		'IMG',
-		'CANVAS',
-		'IFRAME',
-		'SVG',
-		'P',
-		'SPAN',
-		'H1',
-		'H2',
-		'H3',
-		'H4',
-		'H5',
-		'H6',
-		'PRE',
-		'CODE',
-		'SUMMARY',
-		'DETAILS',
-		'OL',
-		'UL',
-		'LI',
-		'DD',
-		'DT'
-	];
-
-	const hasOnlyRawText = (element: HTMLElement) => {
-		// Check if all child nodes are text nodes and not empty
-		return Array.from(element.childNodes).every(
-			(node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim() !== ''
-		);
-	};
-
-	const onPointerDown = async (event: PointerEvent) => {
-		if (event.button === 0) {
-			if (NON_DRAGGING_TAGS.includes(event.target?.tagName?.toUpperCase())) {
-				return;
-			} else if (
-				event.target?.tagName === 'DIV' &&
-				(event.target.hasAttribute('contenteditable') || hasOnlyRawText(event.target))
-			) {
-				return;
-				// TODO else if is transparent, rgba 0 0 0 0 or has no background set whatsoever
-			} else if (false) {
-				return;
-			}
-			await getCurrentWindow().startDragging();
-		}
-	};
 </script>
 
-<svelte:window on:pointerdown={onPointerDown} />
+<Draggable />
 {#if loaded}
 	<slot />
 {/if}

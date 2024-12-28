@@ -14,7 +14,7 @@ export function areAppStatesEqual(
 	);
 }
 
-export type ChatBarPosition = 'BOTTOM_CENTER' | 'BOTTOM_LEFT' | 'BOTTOM_RIGHT';
+export type ChatBarPosition = 'BOTTOM_CENTER' | 'BOTTOM_LEFT' | 'BOTTOM_RIGHT' | 'REMEMBER_LAST';
 export type ResetChatTime = 'IMMEDIATELY' | '10_MIN' | '15_MIN' | '30_MIN' | 'NEVER';
 
 export interface AppConfig {

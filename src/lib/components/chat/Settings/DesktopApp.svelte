@@ -8,6 +8,7 @@
 	import type { i18n } from 'i18next';
 	import Switch from '$lib/components/common/Switch.svelte';
 	import ShortcutEntry from './DesktopApp/ShortcutEntry.svelte';
+	import { setShortcut } from '../../../../app/commands/set_shortcut';
 
 	const dispatch = createEventDispatcher();
 
@@ -28,7 +29,7 @@
 		console.log('Clearing keyboard shortcut...');
 	};
 
-	let openNewChatsInCompanion: boolean;
+	let openNewChatsInCompanion: string;
 	const openNewChatsChangeHandler = () => {};
 
 	let launchAtLogin: boolean;
@@ -37,15 +38,22 @@
 	let openLinksInApp: boolean;
 	const openLinksInAppChangeHandler = () => {};
 
-	const saveConfig = () => {
+	const saveConfig = async () => {
 		console.log('Saving settings. Before:', Object.entries($appConfig));
+		// sets shortcut and saves to config
+		if (await setShortcut(keyboardShortcut)) {
+			$appConfig.shortcut = keyboardShortcut;
+		}
+
 		$appConfig.chatBarPositionPreference = positionOnScreen;
 		$appConfig.resetChatTimePreference = resetToNewChat;
-		$appConfig.shortcut = keyboardShortcut;
-		$appConfig.openChatsInCompanion = openNewChatsInCompanion;
+
+		$appConfig.openChatsInCompanion = openNewChatsInCompanion === 'true';
 		$appConfig.autoLaunch = launchAtLogin;
 		// $appConfig. = openLinksInApp;
+
 		console.log('After:', $appConfig);
+		dispatch('save');
 	};
 
 	onMount(async () => {
@@ -54,7 +62,7 @@
 		positionOnScreen = $appConfig.chatBarPositionPreference;
 		resetToNewChat = $appConfig.resetChatTimePreference;
 		keyboardShortcut = $appConfig.shortcut;
-		openNewChatsInCompanion = $appConfig.openChatsInCompanion;
+		openNewChatsInCompanion = $appConfig.openChatsInCompanion ? 'true' : 'false';
 		launchAtLogin = $appConfig.autoLaunch;
 		// openLinksInApp = $appConfig.;
 	});
@@ -76,6 +84,7 @@
 						<option value="BOTTOM_CENTER">{$i18n.t('Bottom Center')}</option>
 						<option value="BOTTOM_LEFT">{$i18n.t('Bottom Left')}</option>
 						<option value="BOTTOM_RIGHT">{$i18n.t('Bottom Right')}</option>
+						<option value="REMEMBER_LAST">{$i18n.t('Remember Last')}</option>
 					</select>
 				</div>
 			</div>
@@ -142,14 +151,13 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="flex justify-end pt-3 text-sm font-medium">
-			<button
-				class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
-				on:click={saveConfig}
-			>
-				{$i18n.t('Save')}
-			</button>
-		</div>
+	</div>
+	<div class="flex justify-end pt-3 text-sm font-medium">
+		<button
+			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
+			on:click={saveConfig}
+		>
+			{$i18n.t('Save')}
+		</button>
 	</div>
 </div>

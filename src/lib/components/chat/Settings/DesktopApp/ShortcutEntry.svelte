@@ -131,7 +131,7 @@
 		{placeholder}
 		value={displayValue}
 		readonly
-		class="text-center mr-[2px] w-36 h-8 px-4 py-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+		class="text-center m-[3px] w-36 h-6 px-4 py-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
 		on:keydown={handleKeyDown}
 		on:keyup={handleKeyUp}
 		on:blur={handleBlur}

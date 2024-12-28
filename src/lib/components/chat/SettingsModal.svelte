@@ -20,7 +20,7 @@
 	import { IS_TAURI_DESKTOP } from '$lib/constants';
 	import type { i18n } from 'i18next';
 	import type { Writable } from 'svelte/store';
-	import App from './Settings/DesktopApp.svelte';
+	import DesktopApp from './Settings/DesktopApp.svelte';
 
 	const i18n: Writable<i18n> = getContext('i18n');
 
@@ -662,8 +662,7 @@
 						}}
 					/>
 				{:else if selectedTab === 'desktop-app'}
-					<App
-						{saveSettings}
+					<DesktopApp
 						on:save={() => {
 							toast.success($i18n.t('Settings saved successfully!'));
 						}}

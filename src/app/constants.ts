@@ -1,6 +1,9 @@
 import { LogicalSize } from '@tauri-apps/api/window';
 import type { AppConfig, AppState } from './state';
 
+// Store files
+export const APP_STORE_FILE = 'app.json';
+
 // window labels
 export const CHATBAR_WINDOW_LABEL = 'chatbar';
 
@@ -15,13 +18,15 @@ export const APP_STORES_CHANGED = 'APP_STORES_CHANGED';
 export const OPEN_IN_MAIN_WINDOW = 'OPEN_IN_MAIN_WINDOW';
 export const OPEN_IN_COMPANION_CHAT = 'OPEN_IN_COMPANION_CHAT';
 
-// state
+// default state
 export const DEFAULT_STATE: AppState = {
 	lastChatTime: 0,
 	companionChatOpen: false
 };
+
+// default config
 export const DEFAULT_CONFIG: AppConfig = {
-	shortcut: 'Control+Space',
+	shortcut: 'Ctrl+Space',
 	webuiBaseUrl: '',
 	jwtToken: '',
 	chatBarPositionPreference: 'BOTTOM_CENTER',
@@ -29,3 +34,9 @@ export const DEFAULT_CONFIG: AppConfig = {
 	autoLaunch: true,
 	openChatsInCompanion: true
 };
+
+// chatbar distances from left/right edge
+export const CHATBAR_HORIZONTAL_MARGIN = 150; //px
+
+// chatbar distance from bottom edge
+export const CHATBAR_BOTTOM_MARGIN = 297; //px
