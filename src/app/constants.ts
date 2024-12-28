@@ -31,8 +31,9 @@ export const DEFAULT_CONFIG: AppConfig = {
 	jwtToken: '',
 	chatBarPositionPreference: 'BOTTOM_CENTER',
 	resetChatTimePreference: '10_MIN',
-	autoLaunch: true,
-	openChatsInCompanion: true
+	openChatsInCompanion: true,
+	autoLaunch: false,
+	openLinksInApp: false
 };
 
 // chatbar distances from left/right edge

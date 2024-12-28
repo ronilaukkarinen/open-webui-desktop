@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
 	import { createEventDispatcher, onMount, getContext } from 'svelte';
-	import { getLanguages } from '$lib/i18n';
-	import { appConfig, models, settings, theme, user } from '$lib/stores';
+	import { appConfig } from '$lib/stores';
 	import type { ChatBarPosition, ResetChatTime } from '../../../../app/state';
 	import type { Writable } from 'svelte/store';
 	import type { i18n } from 'i18next';
 	import Switch from '$lib/components/common/Switch.svelte';
 	import ShortcutEntry from './DesktopApp/ShortcutEntry.svelte';
 	import { setShortcut } from '../../../../app/commands/set_shortcut';
+	import { delay } from '$lib/utils';
+	import { isRegistered, unregister } from '@tauri-apps/plugin-global-shortcut';
+
+	const BANNED_SHORTCUTS = ['Cmd+C', 'Cmd+V', 'Cmd+A', 'Cmd+X', 'Cmd+Z', 'Cmd+Shift+Z'];
 
 	const dispatch = createEventDispatcher();
 
@@ -22,11 +25,23 @@
 	const resetToNewChatChangeHandler = () => {};
 
 	let keyboardShortcut: string;
-	const keyboardShortcutChangeHandler = () => {
-		console.log('Setting keyboard shortcut to', keyboardShortcut);
+	const keyboardShortcutChangeHandler = async () => {
+		console.log(keyboardShortcut);
+		try {
+			if (keyboardShortcut !== $appConfig.shortcut && (await isRegistered(keyboardShortcut))) {
+				toast.error($i18n.t('Shortcut already in use. Please try another.'));
+				keyboardShortcut = $appConfig.shortcut;
+			} else if (BANNED_SHORTCUTS.includes(keyboardShortcut)) {
+				toast.error($i18n.t('Invalid shortcut. Please try another.'));
+				keyboardShortcut = $appConfig.shortcut;
+			}
+		} catch {
+			toast.error($i18n.t('Invalid shortcut. Please try another.'));
+			keyboardShortcut = $appConfig.shortcut;
+		}
 	};
 	const keyboardShortcutClearHandler = () => {
-		console.log('Clearing keyboard shortcut...');
+		keyboardShortcut = '';
 	};
 
 	let openNewChatsInCompanion: string;
@@ -41,8 +56,18 @@
 	const saveConfig = async () => {
 		console.log('Saving settings. Before:', Object.entries($appConfig));
 		// sets shortcut and saves to config
-		if (await setShortcut(keyboardShortcut)) {
-			$appConfig.shortcut = keyboardShortcut;
+
+		console.log('Right before set:', keyboardShortcut);
+		if (keyboardShortcut !== $appConfig.shortcut) {
+			if (keyboardShortcut === '') {
+				await unregister($appConfig.shortcut);
+				$appConfig.shortcut = '';
+			} else if (await setShortcut(keyboardShortcut)) {
+				$appConfig.shortcut = keyboardShortcut;
+			} else {
+				keyboardShortcut = $appConfig.shortcut;
+				delay(50).then(() => toast.warning($i18n.t('Failed to set shortcut. Please try again.')));
+			}
 		}
 
 		$appConfig.chatBarPositionPreference = positionOnScreen;
@@ -50,7 +75,7 @@
 
 		$appConfig.openChatsInCompanion = openNewChatsInCompanion === 'true';
 		$appConfig.autoLaunch = launchAtLogin;
-		// $appConfig. = openLinksInApp;
+		$appConfig.openLinksInApp = openLinksInApp;
 
 		console.log('After:', $appConfig);
 		dispatch('save');
@@ -64,7 +89,7 @@
 		keyboardShortcut = $appConfig.shortcut;
 		openNewChatsInCompanion = $appConfig.openChatsInCompanion ? 'true' : 'false';
 		launchAtLogin = $appConfig.autoLaunch;
-		// openLinksInApp = $appConfig.;
+		openLinksInApp = $appConfig.openLinksInApp;
 	});
 </script>
 
@@ -124,6 +149,7 @@
 						class="text-right dark:bg-gray-900 w-fit pr-8 rounded py-2 px-2 text-xs bg-transparent outline-none"
 						bind:value={openNewChatsInCompanion}
 						on:change={openNewChatsChangeHandler}
+						disabled={true}
 					>
 						<option value="true">{$i18n.t('In Companion Chat')}</option>
 						<option value="false">{$i18n.t('In Main Window')}</option>
@@ -138,7 +164,11 @@
 			</div>
 			<div class="flex items-center relative">
 				<div class="mt-1">
-					<Switch bind:state={openLinksInApp} on:change={openLinksInAppChangeHandler} />
+					<Switch
+						bind:state={openLinksInApp}
+						on:change={openLinksInAppChangeHandler}
+						disabled={true}
+					/>
 				</div>
 			</div>
 		</div>
@@ -147,7 +177,11 @@
 			<div class=" self-center text-xs font-medium">{$i18n.t('Launch at Login')}</div>
 			<div class="flex items-center relative">
 				<div class="mt-1">
-					<Switch bind:state={launchAtLogin} on:change={launchAtLoginChangeHandler} />
+					<Switch
+						bind:state={launchAtLogin}
+						on:change={launchAtLoginChangeHandler}
+						disabled={true}
+					/>
 				</div>
 			</div>
 		</div>

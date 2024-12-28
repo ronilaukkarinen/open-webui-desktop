@@ -25,6 +25,7 @@ export interface AppConfig {
 	resetChatTimePreference: ResetChatTime;
 	autoLaunch: boolean;
 	openChatsInCompanion: boolean;
+	openLinksInApp: boolean;
 }
 
 export function areAppConfigsEqual(
@@ -38,7 +39,8 @@ export function areAppConfigsEqual(
 		config1?.chatBarPositionPreference === config2?.chatBarPositionPreference &&
 		config1?.resetChatTimePreference === config2?.resetChatTimePreference &&
 		config1?.autoLaunch === config2?.autoLaunch &&
-		config1?.openChatsInCompanion === config2?.openChatsInCompanion
+		config1?.openChatsInCompanion === config2?.openChatsInCompanion &&
+		config1?.openLinksInApp === config2?.openLinksInApp
 	);
 }
 

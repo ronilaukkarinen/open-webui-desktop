@@ -987,3 +987,11 @@ export const applyTheme = (_theme: string) => {
 
 	console.log(_theme);
 };
+
+/**
+ * Promise for `millis` milliseconds later
+ * @param millis number of milliseconds
+ * @returns Resolves after `millis` milliseconds
+ */
+export const delay = (millis: number) =>
+	new Promise<void>((resolve) => setTimeout(resolve, millis));

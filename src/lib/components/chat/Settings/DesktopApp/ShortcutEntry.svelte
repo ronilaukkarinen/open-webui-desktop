@@ -23,9 +23,12 @@
 	}
 
 	$: {
-		console.log(value);
 		if (value) {
 			parseKeybind(value);
+		} else {
+			value = '';
+			displayValue = '';
+			currentKeys.clear();
 		}
 	}
 
@@ -39,8 +42,30 @@
 		Cmd: '⌘',
 		Ctrl: '⌃',
 		Shift: '⇧',
-		Opt: '⌥',
-		Alt: '⌥'
+		Option: '⌥',
+		Alt: '⌥',
+		Backquote: '`',
+		Period: '.',
+		Comma: ',',
+		Slash: '/',
+		Backslash: '\\',
+		BracketLeft: '[',
+		BracketRight: ']',
+		Quote: "'",
+		Semicolon: ';',
+		Equal: '=',
+		Minus: '-',
+		Tab: '⇥',
+		Backspace: '⌫',
+		Delete: '⌦',
+		ArrowUp: '↑',
+		ArrowDown: '↓',
+		ArrowLeft: '←',
+		ArrowRight: '→',
+		Enter: '⏎',
+		Escape: '⎋',
+		Space: '␣',
+		CapsLock: '⇪'
 	} as const;
 
 	function updateDisplayValue() {
@@ -63,12 +88,14 @@
 		}
 
 		currentKeys.clear();
+		isEditing = true;
+		clearingValue = false;
 
 		// Add modifiers in a consistent order:
 		// Super/Cmd first, then Control, Alt, Shift
 		if (e.metaKey) currentKeys.add(navigator.platform.includes('Mac') ? 'Cmd' : 'Super');
 		if (e.ctrlKey) currentKeys.add('Ctrl');
-		if (e.altKey) currentKeys.add(navigator.platform.includes('Mac') ? 'Opt' : 'Alt');
+		if (e.altKey) currentKeys.add(navigator.platform.includes('Mac') ? 'Option' : 'Alt');
 		if (e.shiftKey) currentKeys.add('Shift');
 
 		// Convert key to proper format
@@ -88,15 +115,16 @@
 	}
 
 	function handleKeyUp(e: KeyboardEvent) {
+		const targetElement = e.target as HTMLElement | null;
 		if (e.key === 'Escape') {
 			value = '';
 			displayValue = '';
 			currentKeys.clear();
 			dispatch('clear');
-			e.target?.blur();
+			targetElement?.blur();
 		} else if (e.key === 'Enter' && value) {
 			dispatch('change', value);
-			e.target?.blur();
+			targetElement?.blur();
 		}
 	}
 
@@ -131,7 +159,7 @@
 		{placeholder}
 		value={displayValue}
 		readonly
-		class="text-center m-[3px] w-36 h-6 px-4 py-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+		class="text-center m-[3px] w-32 h-6 px-3 py-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
 		on:keydown={handleKeyDown}
 		on:keyup={handleKeyUp}
 		on:blur={handleBlur}
