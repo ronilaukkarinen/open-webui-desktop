@@ -21,6 +21,7 @@
     "npm:@tailwindcss/typography@~0.5.13": "0.5.15_tailwindcss@3.4.16__postcss@8.4.49",
     "npm:@tauri-apps/api@2": "2.1.1",
     "npm:@tauri-apps/cli@2": "2.1.0",
+    "npm:@tauri-apps/plugin-autostart@2.2": "2.2.0",
     "npm:@tauri-apps/plugin-global-shortcut@2.2": "2.2.0",
     "npm:@tauri-apps/plugin-opener@2": "2.2.2",
     "npm:@tauri-apps/plugin-store@2.2": "2.2.0",
@@ -1241,6 +1242,12 @@
         "@tauri-apps/cli-win32-arm64-msvc",
         "@tauri-apps/cli-win32-ia32-msvc",
         "@tauri-apps/cli-win32-x64-msvc"
+      ]
+    },
+    "@tauri-apps/plugin-autostart@2.2.0": {
+      "integrity": "sha512-TzVcDZdOvdot0avkpstUWJKKEl4cyxLpFB9DZZRW5zH8k+Bv8IVJmO0zyYuw+7oKlGdHOINbD/7Je7GHMViw5w==",
+      "dependencies": [
+        "@tauri-apps/api"
       ]
     },
     "@tauri-apps/plugin-global-shortcut@2.2.0": {
@@ -5239,6 +5246,7 @@
         "npm:@tailwindcss/typography@~0.5.13",
         "npm:@tauri-apps/api@2",
         "npm:@tauri-apps/cli@2",
+        "npm:@tauri-apps/plugin-autostart@2.2",
         "npm:@tauri-apps/plugin-global-shortcut@2.2",
         "npm:@tauri-apps/plugin-opener@2",
         "npm:@tauri-apps/plugin-store@2.2",

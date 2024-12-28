@@ -10,6 +10,7 @@
 	import { setShortcut } from '../../../../app/commands/set_shortcut';
 	import { delay } from '$lib/utils';
 	import { isRegistered, unregister } from '@tauri-apps/plugin-global-shortcut';
+	import * as autoStart from '@tauri-apps/plugin-autostart';
 
 	const BANNED_SHORTCUTS = [
 		'cmd+c',
@@ -85,11 +86,20 @@
 			}
 		}
 
+		try {
+			if (launchAtLogin) {
+				await autoStart.enable();
+			} else {
+				await autoStart.disable();
+			}
+		} catch (e) {
+			console.error('Failed to set launch at login to', launchAtLogin, e);
+		}
+
 		$appConfig.chatBarPositionPreference = positionOnScreen;
 		$appConfig.resetChatTimePreference = resetToNewChat;
 
 		$appConfig.openChatsInCompanion = openNewChatsInCompanion === 'true';
-		$appConfig.autoLaunch = launchAtLogin;
 		$appConfig.openLinksInApp = openLinksInApp;
 
 		console.debug('After:', $appConfig);
@@ -101,7 +111,7 @@
 		resetToNewChat = $appConfig.resetChatTimePreference;
 		keyboardShortcut = $appConfig.shortcut;
 		openNewChatsInCompanion = $appConfig.openChatsInCompanion ? 'true' : 'false';
-		launchAtLogin = $appConfig.autoLaunch;
+		launchAtLogin = await autoStart.isEnabled();
 		openLinksInApp = $appConfig.openLinksInApp;
 	});
 </script>
@@ -190,11 +200,7 @@
 			<div class=" self-center text-xs font-medium">{$i18n.t('Launch at Login')}</div>
 			<div class="flex items-center relative">
 				<div class="mt-1">
-					<Switch
-						bind:state={launchAtLogin}
-						on:change={launchAtLoginChangeHandler}
-						disabled={true}
-					/>
+					<Switch bind:state={launchAtLogin} on:change={launchAtLoginChangeHandler} />
 				</div>
 			</div>
 		</div>

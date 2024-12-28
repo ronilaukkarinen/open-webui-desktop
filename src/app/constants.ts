@@ -32,7 +32,6 @@ export const DEFAULT_CONFIG: AppConfig = {
 	chatBarPositionPreference: 'BOTTOM_CENTER',
 	resetChatTimePreference: '10_MIN',
 	openChatsInCompanion: true,
-	autoLaunch: false,
 	openLinksInApp: false
 } as const;
 
