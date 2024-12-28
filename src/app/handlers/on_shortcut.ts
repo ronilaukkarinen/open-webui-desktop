@@ -45,6 +45,7 @@ export default async function onShortcut(event: ShortcutEvent) {
 	if (await window.isVisible()) {
 		if (state.companionChatOpen && !(await window.isFocused())) {
 			await window.setFocus();
+			document.getElementById('chat-input')?.focus();
 		} else {
 			await window.hide();
 		}
@@ -70,6 +71,7 @@ export default async function onShortcut(event: ShortcutEvent) {
 
 	await window.show();
 	await window.setFocus();
+	document.getElementById('chat-input')?.focus();
 
 	await store.set('state', state);
 }

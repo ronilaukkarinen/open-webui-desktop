@@ -4,6 +4,7 @@ import type { ModelConfig } from '$lib/apis';
 import type { Banner } from '$lib/types';
 import type { Socket } from 'socket.io-client';
 import { type AppConfig, type AppState } from '../../app/state';
+import { DEFAULT_STATE } from '../../app/constants';
 
 // Backend
 export const WEBUI_NAME = writable(APP_NAME);
@@ -53,8 +54,8 @@ export const temporaryChatEnabled = writable(false);
 export const scrollPaginationEnabled = writable(false);
 export const currentChatPage = writable(1);
 
-export const appState = writable<AppState | undefined>(undefined);
-export const appConfig = writable<AppConfig | undefined>(undefined);
+export const appState = writable(DEFAULT_STATE);
+export const appConfig = writable<AppConfig>(undefined);
 
 export type Model = OpenAIModel | OllamaModel;
 

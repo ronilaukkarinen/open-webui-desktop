@@ -22,7 +22,7 @@ export const OPEN_IN_COMPANION_CHAT = 'OPEN_IN_COMPANION_CHAT';
 export const DEFAULT_STATE: AppState = {
 	lastChatTime: 0,
 	companionChatOpen: false
-};
+} as const;
 
 // default config
 export const DEFAULT_CONFIG: AppConfig = {
@@ -34,10 +34,24 @@ export const DEFAULT_CONFIG: AppConfig = {
 	openChatsInCompanion: true,
 	autoLaunch: false,
 	openLinksInApp: false
-};
+} as const;
 
 // chatbar distances from left/right edge
 export const CHATBAR_HORIZONTAL_MARGIN = 150; //px
 
 // chatbar distance from bottom edge
 export const CHATBAR_BOTTOM_MARGIN = 297; //px
+
+// main window options for when closed
+export const MAIN_WINDOW_OPTIONS = {
+	width: 800,
+	height: 650,
+	minWidth: 600,
+	minHeight: 450,
+	visible: true,
+	transparent: false,
+	titleBarStyle: 'overlay',
+	hiddenTitle: true,
+	resizable: true,
+	minimizable: true
+} as const;

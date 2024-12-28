@@ -15,9 +15,7 @@
 		socket,
 		activeUserCount,
 		USAGE_POOL,
-		settings,
 		models,
-		temporaryChatEnabled,
 		tools,
 		banners
 	} from '$lib/stores';
@@ -25,7 +23,7 @@
 	import { page } from '$app/stores';
 	import { getBackendConfig, getModels } from '$lib/apis';
 	import { getSessionUser } from '$lib/apis/auths';
-	import { WEBUI_BASE_URL, WEBUI_HOSTNAME } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/constants';
 	import i18n, { initI18n, getLanguages } from '$lib/i18n';
 	import { bestMatchingLanguage } from '$lib/utils';
 	import { getBanners } from '$lib/apis/configs';
@@ -39,11 +37,11 @@
 		type AppState
 	} from '../app/state';
 	import { unregisterAll } from '@tauri-apps/plugin-global-shortcut';
-	import { DEFAULT_CONFIG, DEFAULT_STATE } from '../app/constants';
-	import { getCurrentWindow, Window } from '@tauri-apps/api/window';
+	import { DEFAULT_CONFIG, DEFAULT_STATE, MAIN_WINDOW_OPTIONS } from '../app/constants';
+	import { Window } from '@tauri-apps/api/window';
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
-	import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 	import Draggable from '$lib/components/desktop-app/Draggable.svelte';
+	import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -161,16 +159,30 @@
 
 			// Reopen event listener
 			unlistenReopen = await listen('reopen', async () => {
-				if (await WebviewWindow.getByLabel('main')) {
-					console.log('main window already open');
+				if (await Window.getByLabel('main')) {
+					console.debug('Main window already open.');
 					return;
+				} else {
+					console.debug('Main window closed, reopening...');
+					try {
+						const window = new WebviewWindow('main', MAIN_WINDOW_OPTIONS);
+						console.log(window);
+						window.once('tauri://window-created', (event) => {
+							console.debug('Main window created:', event);
+						});
+						window.once('tauri://error', (event) => {
+							console.error('Error creating main window:', event);
+						});
+					} catch (e) {
+						console.error('Error creating main window:', e);
+					}
 				}
 			});
 
 			// Load the store
 			store = await load('app.json', { autoSave: true, createNew: false });
 
-			console.log('Config right after load:', await store.get('config'));
+			console.log('Config right after load:', Object.entries((await store.get('config')) || {}));
 
 			// Subscribe to state changes in the store and update the app
 			await store.onKeyChange('state', (state: AppState | undefined) => {
