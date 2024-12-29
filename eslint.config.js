@@ -1,4 +1,6 @@
-module.exports = {
+import { defineConfig } from 'eslint-define-config';
+
+export default defineConfig({
 	root: true,
 	extends: [
 		'eslint:recommended',
@@ -27,5 +29,18 @@ module.exports = {
 				parser: '@typescript-eslint/parser'
 			}
 		}
+	],
+	ignores: [
+		'.DS_Store',
+		'node_modules',
+		'/build',
+		'/.svelte-kit',
+		'/package',
+		'.env',
+		'.env.*',
+		'!env.example',
+		'pnpm-lock.yaml',
+		'package-lock.json',
+		'yarn.lock'
 	]
-};
+});
