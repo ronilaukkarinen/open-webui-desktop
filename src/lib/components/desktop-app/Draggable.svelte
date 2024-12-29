@@ -40,8 +40,8 @@
 	};
 
 	const onPointerDown = async (event: PointerEvent) => {
-		if (!(event.target instanceof HTMLElement)) {
-			console.debug('Pointer down on non-HTMLElement');
+		if (!(event?.target instanceof HTMLElement)) {
+			console.debug('Pointer down on non-HTMLElement', event?.target);
 			return;
 		} else if (event.button !== 0) {
 			console.debug('Pointer down with non-left mouse button');

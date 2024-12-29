@@ -3,13 +3,13 @@
 	import { marked } from 'marked';
 
 	import { onMount, getContext, tick, createEventDispatcher } from 'svelte';
-	import { blur, fade } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	const dispatch = createEventDispatcher();
 
 	import { config, user, models as _models, temporaryChatEnabled } from '$lib/stores';
-	import { sanitizeResponseContent, findWordIndices } from '$lib/utils';
-	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { sanitizeResponseContent } from '$lib/utils';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 
 	import Suggestions from './Suggestions.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
@@ -123,7 +123,7 @@
 										src={model?.info?.meta?.profile_image_url ??
 											($i18n.language === 'dg-DG'
 												? `/doge.png`
-												: `${WEBUI_BASE_URL}/static/favicon.png`)}
+												: `${$WEBUI_BASE_URL}/static/favicon.png`)}
 										class=" size-9 sm:size-10 rounded-full border-[1px] border-gray-200 dark:border-none"
 										alt="logo"
 										draggable="false"

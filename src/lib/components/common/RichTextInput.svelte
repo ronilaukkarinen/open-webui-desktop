@@ -5,7 +5,7 @@
 		codeBlockStyle: 'fenced',
 		headingStyle: 'atx'
 	});
-	turndownService.escape = (string) => string;
+	turndownService.escape = (string: string) => string;
 
 	import { onMount, onDestroy } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
@@ -42,8 +42,8 @@
 	export let shiftEnter = false;
 	export let largeTextAsFile = false;
 
-	let element;
-	let editor;
+	let element: Element;
+	let editor: Editor;
 
 	const options = {
 		throwOnError: false
@@ -160,7 +160,9 @@
 		editor = new Editor({
 			element: element,
 			extensions: [
-				StarterKit,
+				StarterKit.configure({
+					codeBlock: false
+				}),
 				CodeBlockLowlight.configure({
 					lowlight
 				}),

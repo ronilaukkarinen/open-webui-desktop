@@ -1,6 +1,6 @@
 {
 	"$schema": "https://schema.tauri.app/config/2",
-	"productName": "open-webui-desktop",
+	"productName": "Open WebUI",
 	"version": "0.1.0",
 	"identifier": "com.open-webui-desktop.app",
 	"build": {
@@ -14,6 +14,7 @@
 		"windows": [
 			{
 				"label": "main",
+				"title": "Open WebUI",
 				"url": "/",
 				"width": 800,
 				"height": 650,
@@ -28,6 +29,7 @@
 			},
 			{
 				"label": "chatbar",
+				"title": "Chatbar",
 				"url": "/desktop-app/chatbar",
 				"width": 600,
 				"height": 400,

@@ -19,7 +19,7 @@
 		sanitizeResponseContent,
 		createMessagesList
 	} from '$lib/utils';
-	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 
 	import Name from './Name.svelte';
 	import ProfileImage from './ProfileImage.svelte';
@@ -37,7 +37,7 @@
 	import type { Writable } from 'svelte/store';
 	import type { i18n as i18nType } from 'i18next';
 	import ContentRenderer from './ContentRenderer.svelte';
-	import { createNewFeedback, getFeedbackById, updateFeedbackById } from '$lib/apis/evaluations';
+	import { createNewFeedback, updateFeedbackById } from '$lib/apis/evaluations';
 	import { getChatById } from '$lib/apis/chats';
 	import { generateTags } from '$lib/apis';
 
@@ -484,7 +484,7 @@
 		>
 			<ProfileImage
 				src={model?.info?.meta?.profile_image_url ??
-					($i18n.language === 'dg-DG' ? `/doge.png` : `${WEBUI_BASE_URL}/static/favicon.png`)}
+					($i18n.language === 'dg-DG' ? `/doge.png` : `${$WEBUI_BASE_URL}/static/favicon.png`)}
 				className={'size-8'}
 			/>
 		</div>

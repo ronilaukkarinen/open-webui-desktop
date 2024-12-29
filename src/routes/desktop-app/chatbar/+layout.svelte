@@ -20,6 +20,8 @@
 	import { setShortcut } from '../../../app/commands/set_shortcut';
 	import { register, unregister, type ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
 	import { applyTheme } from '$lib/utils';
+	import { getModels } from '$lib/apis';
+	import { getTools } from '$lib/apis/tools';
 
 	interface StoreChangedPayload {
 		store_name:
@@ -40,25 +42,25 @@
 			console.log('stores changed:', event.payload);
 			switch (event.payload.store_name) {
 				case 'models':
-					$models = event.payload.store;
+					models.set(event.payload.store);
 					break;
 				case 'settings':
-					$settings = event.payload.store;
+					settings.set(event.payload.store);
 					break;
 				case 'config':
-					$config = event.payload.store;
+					config.set(event.payload.store);
 					break;
 				case 'user':
-					$user = event.payload.store;
+					user.set(event.payload.store);
 					break;
 				case 'temporaryChatEnabled':
-					$temporaryChatEnabled = event.payload.store;
+					temporaryChatEnabled.set(event.payload.store);
 					break;
 				case 'tools':
-					$tools = event.payload.store;
+					tools.set(event.payload.store);
 					break;
 				case 'theme':
-					$theme = event.payload.store;
+					theme.set(event.payload.store);
 					break;
 			}
 		}
@@ -73,6 +75,10 @@
 	onMount(() => {
 		let unlistenFocusChange: UnlistenFn;
 		(async () => {
+			// Get models and tools
+			models.set(await getModels(localStorage.token));
+			tools.set(await getTools(localStorage.token));
+
 			// Move chat bar
 			await moveChatBar($appConfig.chatBarPositionPreference, false);
 

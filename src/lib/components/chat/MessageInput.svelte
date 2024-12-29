@@ -9,7 +9,6 @@
 		type Model,
 		mobile,
 		settings,
-		showSidebar,
 		models,
 		config,
 		showCallOverlay,
@@ -21,9 +20,9 @@
 	import { blobToFile, createMessagesList, findWordIndices } from '$lib/utils';
 	import { transcribeAudio } from '$lib/apis/audio';
 	import { uploadFile } from '$lib/apis/files';
-	import { getTools } from '$lib/apis/tools';
 
-	import { WEBUI_BASE_URL, WEBUI_API_BASE_URL, PASTED_TEXT_CHARACTER_LIMIT } from '$lib/constants';
+	import { WEBUI_BASE_URL, WEBUI_API_BASE_URL } from '$lib/stores';
+	import { PASTED_TEXT_CHARACTER_LIMIT } from '$lib/constants';
 
 	import Tooltip from '../common/Tooltip.svelte';
 	import InputMenu from './MessageInput/InputMenu.svelte';
@@ -35,7 +34,6 @@
 	import XMark from '../icons/XMark.svelte';
 	import RichTextInput from '../common/RichTextInput.svelte';
 	import { generateAutoCompletion } from '$lib/apis';
-	import { error, text } from '@sveltejs/kit';
 
 	const i18n = getContext('i18n');
 
@@ -147,7 +145,7 @@
 				fileItem.file = uploadedFile;
 				fileItem.id = uploadedFile.id;
 				fileItem.collection_name = uploadedFile?.meta?.collection_name;
-				fileItem.url = `${WEBUI_API_BASE_URL}/files/${uploadedFile.id}`;
+				fileItem.url = `${$WEBUI_API_BASE_URL}/files/${uploadedFile.id}`;
 
 				files = files;
 			} else {
@@ -363,7 +361,7 @@
 												?.profile_image_url ??
 												($i18n.language === 'dg-DG'
 													? `/doge.png`
-													: `${WEBUI_BASE_URL}/static/favicon.png`)}
+													: `${$WEBUI_BASE_URL}/static/favicon.png`)}
 										/>
 										<div class="translate-y-[0.5px]">
 											Talking to <span class=" font-medium">{atSelectedModel.name}</span>

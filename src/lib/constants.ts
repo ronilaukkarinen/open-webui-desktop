@@ -1,15 +1,5 @@
 export const APP_NAME = 'Open WebUI';
 
-export const WEBUI_HOSTNAME = 'localhost:8080';
-export const WEBUI_BASE_URL = `http://${WEBUI_HOSTNAME}`;
-export const WEBUI_API_BASE_URL = `${WEBUI_BASE_URL}/api/v1`;
-
-export const OLLAMA_API_BASE_URL = `${WEBUI_BASE_URL}/ollama`;
-export const OPENAI_API_BASE_URL = `${WEBUI_BASE_URL}/openai`;
-export const AUDIO_API_BASE_URL = `${WEBUI_BASE_URL}/audio/api/v1`;
-export const IMAGES_API_BASE_URL = `${WEBUI_BASE_URL}/images/api/v1`;
-export const RETRIEVAL_API_BASE_URL = `${WEBUI_BASE_URL}/retrieval/api/v1`;
-
 // @ts-expect-error defined in vite.config.ts
 export const WEBUI_VERSION = APP_VERSION;
 // @ts-expect-error defined in vite.config.ts
@@ -98,8 +88,7 @@ export const PASTED_TEXT_CHARACTER_LIMIT = 1000;
 
 export const THEMES = ['dark', 'light', 'rose-pine dark', 'rose-pine-dawn light', 'oled-dark'];
 
-const IS_TAURI = '__TAURI_INTERNALS__' in window || '__TAURI__' in window;
-export default IS_TAURI; // running on a desktop app or a mobile app - but not in the browser
+export const IS_TAURI = '__TAURI_INTERNALS__' in window || '__TAURI__' in window; // running on a desktop app or a mobile app - but not in the browser
 export const isWeb = !IS_TAURI; // running on the browser on either desktop or mobile - but not as a tauri app
 
 export const IS_MOBILE = navigator.maxTouchPoints > 0; // running in mobile either in the browser or as a tauri app

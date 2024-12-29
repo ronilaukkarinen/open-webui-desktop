@@ -1,6 +1,6 @@
 <script lang="ts">
 	import DOMPurify from 'dompurify';
-	import { createEventDispatcher, onMount, getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	const i18n = getContext('i18n');
 
 	import fileSaver from 'file-saver';
@@ -9,7 +9,7 @@
 	import { marked, type Token } from 'marked';
 	import { revertSanitizedResponseContent, unescapeHtml } from '$lib/utils';
 
-	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 
 	import CodeBlock from '$lib/components/chat/Messages/CodeBlock.svelte';
 	import MarkdownInlineTokens from '$lib/components/chat/Messages/Markdown/MarkdownInlineTokens.svelte';
@@ -193,14 +193,14 @@
 		{@const html = DOMPurify.sanitize(token.text)}
 		{#if html && html.includes('<video')}
 			{@html html}
-		{:else if token.text.includes(`<iframe src="${WEBUI_BASE_URL}/api/v1/files/`)}
+		{:else if token.text.includes(`<iframe src="${$WEBUI_BASE_URL}/api/v1/files/`)}
 			{@html `${token.text}`}
 		{:else}
 			{token.text}
 		{/if}
 	{:else if token.type === 'iframe'}
 		<iframe
-			src="{WEBUI_BASE_URL}/api/v1/files/{token.fileId}/content"
+			src="{$WEBUI_BASE_URL}/api/v1/files/{token.fileId}/content"
 			title={token.fileId}
 			width="100%"
 			frameborder="0"

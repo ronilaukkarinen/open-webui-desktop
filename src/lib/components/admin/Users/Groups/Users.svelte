@@ -3,8 +3,7 @@
 	const i18n = getContext('i18n');
 
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
-	import Plus from '$lib/components/icons/Plus.svelte';
-	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 	import Checkbox from '$lib/components/common/Checkbox.svelte';
 	import Badge from '$lib/components/common/Badge.svelte';
 
@@ -94,7 +93,7 @@
 								<div class="flex">
 									<img
 										class=" rounded-full size-5 object-cover mr-2.5"
-										src={user.profile_image_url.startsWith(WEBUI_BASE_URL) ||
+										src={user.profile_image_url.startsWith($WEBUI_BASE_URL) ||
 										user.profile_image_url.startsWith('https://www.gravatar.com/avatar/') ||
 										user.profile_image_url.startsWith('data:')
 											? user.profile_image_url

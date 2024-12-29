@@ -36,7 +36,8 @@
 	let showTemporaryChatControl =
 		$user.role === 'user' ? ($user?.permissions?.chat?.temporary ?? true) : true;
 
-	let items = $models.map((model) => ({
+	let items = [];
+	$: items = $models.map((model) => ({
 		value: model.id,
 		label: model.name,
 		model: model

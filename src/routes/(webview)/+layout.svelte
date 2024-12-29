@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 	import {
 		config,
 		models,
@@ -48,7 +48,7 @@
 
 <svelte:head>
 	<title>{$WEBUI_NAME}</title>
-	<link crossorigin="anonymous" rel="icon" href="{WEBUI_BASE_URL}/static/favicon.png" />
+	<link crossorigin="anonymous" rel="icon" href="{$WEBUI_BASE_URL}/static/favicon.png" />
 
 	<!-- rosepine themes have been disabled as it's not up to date with our latest version. -->
 	<!-- feel free to make a PR to fix if anyone wants to see it return -->

@@ -23,7 +23,7 @@
 	import { page } from '$app/stores';
 	import { getBackendConfig, getModels } from '$lib/apis';
 	import { getSessionUser } from '$lib/apis/auths';
-	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 	import i18n, { initI18n, getLanguages } from '$lib/i18n';
 	import { bestMatchingLanguage } from '$lib/utils';
 	import { getBanners } from '$lib/apis/configs';
@@ -42,6 +42,7 @@
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import Draggable from '$lib/components/desktop-app/Draggable.svelte';
 	import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+	import reopenMainWindow from '../app/actions/reopen_main_window';
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -97,7 +98,7 @@
 	const BREAKPOINT = 768;
 
 	const setupSocket = () => {
-		const _socket = io(`${WEBUI_BASE_URL}` || undefined, {
+		const _socket = io(`${$WEBUI_BASE_URL}` || undefined, {
 			reconnection: true,
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 5000,
@@ -159,30 +160,11 @@
 
 			// Reopen event listener
 			unlistenReopen = await listen('reopen', async () => {
-				if (await Window.getByLabel('main')) {
-					console.debug('Main window already open.');
-					return;
-				} else {
-					console.debug('Main window closed, reopening...');
-					try {
-						const window = new WebviewWindow('main', MAIN_WINDOW_OPTIONS);
-						console.log(window);
-						window.once('tauri://window-created', (event) => {
-							console.debug('Main window created:', event);
-						});
-						window.once('tauri://error', (event) => {
-							console.error('Error creating main window:', event);
-						});
-					} catch (e) {
-						console.error('Error creating main window:', e);
-					}
-				}
+				await reopenMainWindow();
 			});
 
 			// Load the store
 			store = await load('app.json', { autoSave: true, createNew: false });
-
-			console.log('Config right after load:', Object.entries((await store.get('config')) || {}));
 
 			// Subscribe to state changes in the store and update the app
 			await store.onKeyChange('state', (state: AppState | undefined) => {
@@ -273,7 +255,8 @@
 						// Don't redirect if we're already on the auth page
 						// Needed because we pass in tokens from OAuth logins via URL fragments
 						if ($page.url.pathname !== '/auth') {
-							await goto('/auth');
+							// await goto('/auth');
+							window.location.href = '/auth';
 						}
 					}
 				}
@@ -281,10 +264,6 @@
 				// Redirect to /error when Backend Not Detected
 				await goto(`/error`);
 			}
-
-			$models = await getModels(localStorage.token);
-			$banners = await getBanners(localStorage.token);
-			$tools = await getTools(localStorage.token);
 
 			await tick();
 

@@ -2,7 +2,7 @@
 	import { v4 as uuidv4 } from 'uuid';
 	import { toast } from 'svelte-sonner';
 	import mermaid from 'mermaid';
-	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
+	import { PaneGroup, Pane } from 'paneforge';
 
 	import { getContext, onDestroy, onMount, tick } from 'svelte';
 	const i18n: Writable<i18nType> = getContext('i18n');
@@ -10,9 +10,10 @@
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import { get, type Unsubscriber, type Writable } from 'svelte/store';
+	import { type Unsubscriber, type Writable } from 'svelte/store';
 	import type { i18n as i18nType } from 'i18next';
-	import { IS_TAURI_DESKTOP, WEBUI_BASE_URL } from '$lib/constants';
+	import { IS_TAURI_DESKTOP } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 
 	import {
 		chatId,
@@ -41,7 +42,6 @@
 		convertMessagesToHistory,
 		copyToClipboard,
 		getMessageContentParts,
-		extractSentencesForAudio,
 		promptTemplate,
 		splitStream
 	} from '$lib/utils';
@@ -50,7 +50,6 @@
 	import {
 		addTagById,
 		createNewChat,
-		deleteTagById,
 		deleteTagsById,
 		getAllTags,
 		getChatById,
@@ -1359,7 +1358,7 @@
 									if ($settings.notificationEnabled && !document.hasFocus()) {
 										const notification = new Notification(`${model.id}`, {
 											body: responseMessage.content,
-											icon: `${WEBUI_BASE_URL}/static/favicon.png`
+											icon: `${$WEBUI_BASE_URL}/static/favicon.png`
 										});
 									}
 
@@ -1615,7 +1614,7 @@
 					chat_id: $chatId,
 					id: responseMessageId
 				},
-				`${WEBUI_BASE_URL}/api`
+				`${$WEBUI_BASE_URL}/api`
 			);
 
 			// Wait until history/message have been updated
@@ -1715,7 +1714,7 @@
 				if ($settings.notificationEnabled && !document.hasFocus()) {
 					const notification = new Notification(`${model.id}`, {
 						body: responseMessage.content,
-						icon: `${WEBUI_BASE_URL}/static/favicon.png`
+						icon: `${$WEBUI_BASE_URL}/static/favicon.png`
 					});
 				}
 

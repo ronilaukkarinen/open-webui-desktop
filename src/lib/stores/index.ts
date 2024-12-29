@@ -1,15 +1,46 @@
 import { APP_NAME } from '$lib/constants';
-import { type Writable, writable } from 'svelte/store';
+import { derived, type Writable, writable } from 'svelte/store';
 import type { ModelConfig } from '$lib/apis';
 import type { Banner } from '$lib/types';
 import type { Socket } from 'socket.io-client';
-import { type AppConfig, type AppState } from '../../app/state';
+import { type AppConfig } from '../../app/state';
 import { DEFAULT_STATE } from '../../app/constants';
 
 // Backend
 export const WEBUI_NAME = writable(APP_NAME);
 export const config: Writable<Config | undefined> = writable(undefined);
 export const user: Writable<SessionUser | undefined> = writable(undefined);
+
+// Desktop app
+export const WEBUI_HOSTNAME = writable('localhost:8080');
+export const WEBUI_BASE_URL = derived(
+	WEBUI_HOSTNAME,
+	($WEBUI_HOSTNAME) => `http://${$WEBUI_HOSTNAME}`
+);
+export const WEBUI_API_BASE_URL = derived(
+	WEBUI_BASE_URL,
+	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/api/v1`
+);
+export const OLLAMA_API_BASE_URL = derived(
+	WEBUI_BASE_URL,
+	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/ollama`
+);
+export const OPENAI_API_BASE_URL = derived(
+	WEBUI_BASE_URL,
+	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/openai`
+);
+export const AUDIO_API_BASE_URL = derived(
+	WEBUI_BASE_URL,
+	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/audio/api/v1`
+);
+export const IMAGES_API_BASE_URL = derived(
+	WEBUI_BASE_URL,
+	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/images/api/v1`
+);
+export const RETRIEVAL_API_BASE_URL = derived(
+	WEBUI_BASE_URL,
+	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/retrieval/api/v1`
+);
 
 // Frontend
 export const MODEL_DOWNLOAD_POOL = writable({});

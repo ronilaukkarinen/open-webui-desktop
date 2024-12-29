@@ -1,10 +1,11 @@
-import { WEBUI_API_BASE_URL } from '$lib/constants';
+import { WEBUI_API_BASE_URL } from '$lib/stores';
 import type { Banner } from '$lib/types';
+import { get } from 'svelte/store';
 
 export const importConfig = async (token: string, config) => {
 	let error = null;
 
-	const res = await fetch(`${WEBUI_API_BASE_URL}/configs/import`, {
+	const res = await fetch(`${get(WEBUI_API_BASE_URL)}/configs/import`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ export const importConfig = async (token: string, config) => {
 export const exportConfig = async (token: string) => {
 	let error = null;
 
-	const res = await fetch(`${WEBUI_API_BASE_URL}/configs/export`, {
+	const res = await fetch(`${get(WEBUI_API_BASE_URL)}/configs/export`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -61,7 +62,7 @@ export const exportConfig = async (token: string) => {
 export const getModelsConfig = async (token: string) => {
 	let error = null;
 
-	const res = await fetch(`${WEBUI_API_BASE_URL}/configs/models`, {
+	const res = await fetch(`${get(WEBUI_API_BASE_URL)}/configs/models`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -88,7 +89,7 @@ export const getModelsConfig = async (token: string) => {
 export const setModelsConfig = async (token: string, config: object) => {
 	let error = null;
 
-	const res = await fetch(`${WEBUI_API_BASE_URL}/configs/models`, {
+	const res = await fetch(`${get(WEBUI_API_BASE_URL)}/configs/models`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -118,7 +119,7 @@ export const setModelsConfig = async (token: string, config: object) => {
 export const setDefaultPromptSuggestions = async (token: string, promptSuggestions: string) => {
 	let error = null;
 
-	const res = await fetch(`${WEBUI_API_BASE_URL}/configs/suggestions`, {
+	const res = await fetch(`${get(WEBUI_API_BASE_URL)}/configs/suggestions`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -148,7 +149,7 @@ export const setDefaultPromptSuggestions = async (token: string, promptSuggestio
 export const getBanners = async (token: string): Promise<Banner[]> => {
 	let error = null;
 
-	const res = await fetch(`${WEBUI_API_BASE_URL}/configs/banners`, {
+	const res = await fetch(`${get(WEBUI_API_BASE_URL)}/configs/banners`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -175,7 +176,7 @@ export const getBanners = async (token: string): Promise<Banner[]> => {
 export const setBanners = async (token: string, banners: Banner[]) => {
 	let error = null;
 
-	const res = await fetch(`${WEBUI_API_BASE_URL}/configs/banners`, {
+	const res = await fetch(`${get(WEBUI_API_BASE_URL)}/configs/banners`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

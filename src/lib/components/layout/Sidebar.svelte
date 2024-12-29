@@ -6,8 +6,6 @@
 	import {
 		user,
 		chats,
-		settings,
-		showSettings,
 		chatId,
 		tags,
 		showSidebar,
@@ -18,32 +16,29 @@
 		currentChatPage,
 		temporaryChatEnabled
 	} from '$lib/stores';
-	import { onMount, getContext, tick, onDestroy } from 'svelte';
+	import { onMount, getContext, onDestroy } from 'svelte';
 
 	const i18n = getContext('i18n');
 
 	import {
-		deleteChatById,
 		getChatList,
 		getAllTags,
 		getChatListBySearchText,
-		createNewChat,
 		getPinnedChatList,
 		toggleChatPinnedStatusById,
-		getChatPinnedStatusById,
 		getChatById,
 		updateChatFolderIdById,
 		importChat
 	} from '$lib/apis/chats';
 	import { createNewFolder, getFolders, updateFolderParentIdById } from '$lib/apis/folders';
-	import { IS_TAURI_DESKTOP, WEBUI_BASE_URL } from '$lib/constants';
+	import { IS_TAURI_DESKTOP } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 
 	import ArchivedChatsModal from './Sidebar/ArchivedChatsModal.svelte';
 	import UserMenu from './Sidebar/UserMenu.svelte';
 	import ChatItem from './Sidebar/ChatItem.svelte';
 	import Spinner from '../common/Spinner.svelte';
 	import Loader from '../common/Loader.svelte';
-	import AddFilesPlaceholder from '../AddFilesPlaceholder.svelte';
 	import SearchInput from './Sidebar/SearchInput.svelte';
 	import Folder from '../common/Folder.svelte';
 	import Plus from '../icons/Plus.svelte';
@@ -437,7 +432,7 @@
 				<div class="self-center mx-1.5">
 					<img
 						crossorigin="anonymous"
-						src="{WEBUI_BASE_URL}/static/favicon.png"
+						src="{$WEBUI_BASE_URL}/static/favicon.png"
 						class=" size-5 -translate-x-1.5 rounded-full"
 						alt="logo"
 					/>

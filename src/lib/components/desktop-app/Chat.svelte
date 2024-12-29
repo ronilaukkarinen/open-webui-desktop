@@ -11,7 +11,7 @@
 
 	import { writable, type Unsubscriber, type Writable } from 'svelte/store';
 	import type { i18n as i18nType } from 'i18next';
-	import { WEBUI_BASE_URL } from '$lib/constants';
+	import { WEBUI_BASE_URL } from '$lib/stores';
 
 	import {
 		chatId,
@@ -76,6 +76,7 @@
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { COMPANION_CHAT_EXPIRED, OPEN_IN_MAIN_WINDOW } from '../../../app/constants';
 	import { emitTo, listen, type UnlistenFn } from '@tauri-apps/api/event';
+	import reopenMainWindow from '../../../app/actions/reopen_main_window';
 
 	export let chatIdProp = '';
 
@@ -105,8 +106,8 @@
 	let atSelectedModel: Model | undefined;
 	let selectedModelIds = [];
 	$: selectedModelIds = atSelectedModel !== undefined ? [atSelectedModel.id] : selectedModels;
-	$: console.log(atSelectedModel);
-	$: console.log(selectedModelIds);
+	$: console.debug(atSelectedModel);
+	$: console.debug(selectedModelIds);
 
 	let selectedToolIds = [];
 	let webSearchEnabled = false;
@@ -475,6 +476,9 @@
 
 	const initNewChat = async () => {
 		console.log('initNewChat called');
+		console.log('Models', $models);
+		console.log('Selected models', selectedModels);
+		console.log('Settings', $settings);
 		const userSettings = await getUserSettings(localStorage.token);
 
 		if (userSettings) {
@@ -1388,7 +1392,7 @@
 									if ($settings.notificationEnabled && !document.hasFocus()) {
 										const notification = new Notification(`${model.id}`, {
 											body: responseMessage.content,
-											icon: `${WEBUI_BASE_URL}/static/favicon.png`
+											icon: `${$WEBUI_BASE_URL}/static/favicon.png`
 										});
 									}
 
@@ -1644,7 +1648,7 @@
 					chat_id: $chatId,
 					id: responseMessageId
 				},
-				`${WEBUI_BASE_URL}/api`
+				`${$WEBUI_BASE_URL}/api`
 			);
 
 			// Wait until history/message have been updated
@@ -1744,7 +1748,7 @@
 				if ($settings.notificationEnabled && !document.hasFocus()) {
 					const notification = new Notification(`${model.id}`, {
 						body: responseMessage.content,
-						icon: `${WEBUI_BASE_URL}/static/favicon.png`
+						icon: `${$WEBUI_BASE_URL}/static/favicon.png`
 					});
 				}
 
@@ -2191,6 +2195,8 @@
 	};
 
 	const openInMainWindow = async () => {
+		// make sure window is reopened
+		await reopenMainWindow();
 		emitTo('main', OPEN_IN_MAIN_WINDOW, {
 			chatId: $chatId
 		});
@@ -2199,8 +2205,8 @@
 		await initNewChat();
 	};
 
-	let placeholder = writable('');
-	$: $placeholder =
+	let placeholder: string = '';
+	$: placeholder =
 		selectedModels[0]?.trim() === ''
 			? 'Select a model'
 			: selectedModels.length === 1
@@ -2244,37 +2250,35 @@
 			</div>
 		</div>
 	{/if}
-	{#key $placeholder}
-		<MessageInput
-			{history}
-			bind:selectedModels
-			bind:files
-			bind:prompt
-			bind:autoScroll
-			bind:selectedToolIds
-			bind:webSearchEnabled
-			bind:atSelectedModel
-			placeholder={$placeholder}
-			transparentBackground={false}
-			{stopResponse}
-			{createMessagePair}
-			on:upload={async (e) => {
-				const { type, data } = e.detail;
+	<MessageInput
+		{history}
+		bind:selectedModels
+		bind:files
+		bind:prompt
+		bind:autoScroll
+		bind:selectedToolIds
+		bind:webSearchEnabled
+		bind:atSelectedModel
+		{placeholder}
+		transparentBackground={false}
+		{stopResponse}
+		{createMessagePair}
+		on:upload={async (e) => {
+			const { type, data } = e.detail;
 
-				if (type === 'web') {
-					await uploadWeb(data);
-				} else if (type === 'youtube') {
-					await uploadYoutubeTranscription(data);
-				}
-			}}
-			on:submit={async (e) => {
-				if (e.detail) {
-					await tick();
-					submitPrompt(
-						($settings?.richTextInput ?? true) ? e.detail.replaceAll('\n\n', '\n') : e.detail
-					);
-				}
-			}}
-		/>
-	{/key}
+			if (type === 'web') {
+				await uploadWeb(data);
+			} else if (type === 'youtube') {
+				await uploadYoutubeTranscription(data);
+			}
+		}}
+		on:submit={async (e) => {
+			if (e.detail) {
+				await tick();
+				submitPrompt(
+					($settings?.richTextInput ?? true) ? e.detail.replaceAll('\n\n', '\n') : e.detail
+				);
+			}
+		}}
+	/>
 </svelte:component>

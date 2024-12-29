@@ -1,16 +1,9 @@
 <script lang="ts">
-	import { toast } from 'svelte-sonner';
-
 	import { goto } from '$app/navigation';
 	import { onMount, tick, getContext } from 'svelte';
 
-	import {
-		OLLAMA_API_BASE_URL,
-		OPENAI_API_BASE_URL,
-		WEBUI_API_BASE_URL,
-		WEBUI_BASE_URL
-	} from '$lib/constants';
-	import { WEBUI_NAME, config, user, models, settings } from '$lib/stores';
+	import { WEBUI_BASE_URL } from '$lib/stores';
+	import { config, user, models, settings } from '$lib/stores';
 
 	import { generateOpenAIChatCompletion } from '$lib/apis/openai';
 
@@ -19,7 +12,6 @@
 
 	import Messages from '$lib/components/playground/Chat/Messages.svelte';
 	import ChevronUp from '../icons/ChevronUp.svelte';
-	import ChevronDown from '../icons/ChevronDown.svelte';
 	import Pencil from '../icons/Pencil.svelte';
 	import Cog6 from '../icons/Cog6.svelte';
 	import Sidebar from '../common/Sidebar.svelte';
@@ -76,7 +68,7 @@
 					...messages
 				].filter((message) => message)
 			},
-			`${WEBUI_BASE_URL}/api`
+			`${$WEBUI_BASE_URL}/api`
 		);
 
 		let responseMessage;

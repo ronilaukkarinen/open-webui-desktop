@@ -1,8 +1,7 @@
 <script>
-	import { WEBUI_BASE_URL } from '$lib/constants';
-	import { WEBUI_NAME, config, user, showSidebar } from '$lib/stores';
-	import { goto } from '$app/navigation';
-	import { onMount, getContext } from 'svelte';
+	import { WEBUI_BASE_URL } from '$lib/stores';
+	import { config, user } from '$lib/stores';
+	import { getContext } from 'svelte';
 
 	import dayjs from 'dayjs';
 	import relativeTime from 'dayjs/plugin/relativeTime';
@@ -25,7 +24,6 @@
 	import Plus from '$lib/components/icons/Plus.svelte';
 	import ChevronUp from '$lib/components/icons/ChevronUp.svelte';
 	import ChevronDown from '$lib/components/icons/ChevronDown.svelte';
-	import About from '$lib/components/chat/Settings/About.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -346,7 +344,7 @@
 						<div class="flex flex-row w-max">
 							<img
 								class=" rounded-full w-6 h-6 object-cover mr-2.5"
-								src={user.profile_image_url.startsWith(WEBUI_BASE_URL) ||
+								src={user.profile_image_url.startsWith($WEBUI_BASE_URL) ||
 								user.profile_image_url.startsWith('https://www.gravatar.com/avatar/') ||
 								user.profile_image_url.startsWith('data:')
 									? user.profile_image_url
