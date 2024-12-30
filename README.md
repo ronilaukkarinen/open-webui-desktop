@@ -1,7 +1,6 @@
 # Open WebUI Desktop
 
 **Status: Early Development, WIP, Unstable.**  
-Currently incompatible with non-local setups.
 
 Open WebUI Desktop is a desktop application for [Open WebUI](https://github.com/open-webui/open-webui), a popular self-hosted LLM WebUI. Built using Tauri 2, it incorporates Svelte-based front-end code from Open WebUI to deliver a seamless desktop experience.
 
