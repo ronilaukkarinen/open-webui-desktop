@@ -1,47 +1,36 @@
 <script lang="ts">
-	import { toast } from 'svelte-sonner';
-	import { onMount, tick, getContext } from 'svelte';
-	import { openDB, deleteDB } from 'idb';
-	import fileSaver from 'file-saver';
-	const { saveAs } = fileSaver;
-	import mermaid from 'mermaid';
+	import { saveAs } from 'file-saver';
+	import { deleteDB, openDB } from 'idb';
+	import { getContext, onMount, tick } from 'svelte';
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
 
-	import { getKnowledgeBases } from '$lib/apis/knowledge';
-	import { getFunctions } from '$lib/apis/functions';
 	import { getModels, getVersionUpdates } from '$lib/apis';
-	import { getAllTags } from '$lib/apis/chats';
-	import { getPrompts } from '$lib/apis/prompts';
-	import { getTools } from '$lib/apis/tools';
 	import { getBanners } from '$lib/apis/configs';
+	import { getTools } from '$lib/apis/tools';
 	import { getUserSettings } from '$lib/apis/users';
 
 	import { WEBUI_VERSION } from '$lib/constants';
 	import { compareVersion } from '$lib/utils';
 
 	import {
-		config,
-		user,
-		settings,
-		models,
-		prompts,
-		knowledge,
-		tools,
-		functions,
-		tags,
 		banners,
-		showSettings,
+		config,
+		models,
+		settings,
 		showChangelog,
-		temporaryChatEnabled
+		showSettings,
+		temporaryChatEnabled,
+		tools,
+		user
 	} from '$lib/stores';
 
-	import Sidebar from '$lib/components/layout/Sidebar.svelte';
-	import SettingsModal from '$lib/components/chat/SettingsModal.svelte';
 	import ChangelogModal from '$lib/components/ChangelogModal.svelte';
+	import SettingsModal from '$lib/components/chat/SettingsModal.svelte';
 	import AccountPending from '$lib/components/layout/Overlay/AccountPending.svelte';
+	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import UpdateInfoToast from '$lib/components/layout/UpdateInfoToast.svelte';
 
 	const i18n = getContext('i18n');

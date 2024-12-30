@@ -1,50 +1,65 @@
-import { defineConfig } from 'eslint-define-config';
+import js from '@eslint/js';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import cypressPlugin from 'eslint-plugin-cypress';
+import sveltePlugin from 'eslint-plugin-svelte';
+import globals from 'globals';
+import svelteParser from 'svelte-eslint-parser';
 
-export default defineConfig({
-	root: true,
-	extends: [
-		'eslint:recommended',
-		'plugin:@typescript-eslint/recommended',
-		'plugin:svelte/recommended',
-		'plugin:cypress/recommended',
-		'prettier'
-	],
-	parser: '@typescript-eslint/parser',
-	plugins: ['@typescript-eslint'],
-	parserOptions: {
-		sourceType: 'module',
-		ecmaVersion: 2020,
-		extraFileExtensions: ['.svelte']
+export default [
+	js.configs.recommended,
+	{
+		ignores: ['**/static/', '**/build/', '**/dist/', '**/.svelte-kit/', '**/src-tauri/']
 	},
-	env: {
-		browser: true,
-		es2017: true,
-		node: true
-	},
-	overrides: [
-		{
-			files: ['*.svelte'],
-			parser: 'svelte-eslint-parser',
-			parserOptions: {
-				parser: '@typescript-eslint/parser'
+	{
+		files: ['src/**/*.{js,ts,mts,cts,jsx,tsx,mtsx,ctsx}'],
+		
+		languageOptions: {
+			parser: tsParser,
+			ecmaVersion: 2020,
+			sourceType: 'module',
+			globals: {
+				...globals.browser,
+				...globals.es2017,
+				...globals.node
 			}
+		},
+		plugins: {
+			'@typescript-eslint': tsPlugin
+		},
+		rules: {
+			...tsPlugin.configs.recommended.rules
 		}
-	],
-	ignores: [
-		'.DS_Store',
-		'node_modules',
-		'build',
-		'.svelte-kit',
-		'src-tauri',
-		'.vscode',
-		'.zed',
-		'.aider*',
-		'package',
-		'.env',
-		'.env.*',
-		'!env.example',
-		'pnpm-lock.yaml',
-		'package-lock.json',
-		'yarn.lock'
-	]
-});
+	},
+	{
+		files: ['src/**/*.svelte'],
+		languageOptions: {
+			parser: svelteParser,
+			parserOptions: {
+				parser: tsParser
+			},
+			ecmaVersion: 2020,
+			sourceType: 'module',
+			globals: {
+				...globals.browser,
+				...globals.es2017,
+				...globals.node
+			}
+		},
+		plugins: {
+			svelte: sveltePlugin
+		},
+		rules: {
+			...sveltePlugin.configs.recommended.rules
+		}
+	},
+	{
+		files: ['cypress/**/*.{js,ts}'],
+		plugins: {
+			cypress: cypressPlugin
+		},
+		rules: {
+			...cypressPlugin.configs.recommended.rules
+		}
+	}
+];

@@ -1,10 +1,10 @@
-import { APP_NAME } from '$lib/constants';
-import { derived, type Writable, writable } from 'svelte/store';
 import type { ModelConfig } from '$lib/apis';
+import { APP_NAME } from '$lib/constants';
 import type { Banner } from '$lib/types';
 import type { Socket } from 'socket.io-client';
-import { type AppConfig } from '../../app/state';
+import { derived, type Writable, writable } from 'svelte/store';
 import { DEFAULT_STATE } from '../../app/constants';
+import { type AppConfig } from '../../app/state';
 
 // Backend
 export const WEBUI_NAME = writable(APP_NAME);
@@ -69,7 +69,7 @@ export const functions = writable(null);
 
 export const banners: Writable<Banner[]> = writable([]);
 
-export const settings: Writable<Settings> = writable({});
+export const settings= writable<Settings>(undefined);
 
 export const showSidebar = writable(false);
 export const showSettings = writable(false);

@@ -1,10 +1,9 @@
+import { sha256 } from 'js-sha256';
 import { v4 as uuidv4 } from 'uuid';
-import sha256 from 'js-sha256';
 
 import { THEMES } from '$lib/constants';
-import { WEBUI_BASE_URL } from '$lib/stores';
+import { theme, WEBUI_BASE_URL } from '$lib/stores';
 import { TTS_RESPONSE_SPLIT } from '$lib/types';
-import { theme } from '$lib/stores';
 import { get } from 'svelte/store';
 
 //////////////////////////
@@ -401,15 +400,18 @@ export const getImportOrigin = (_chats) => {
 
 export const getUserPosition = async (raw = false) => {
 	// Get the user's location using the Geolocation API
-	const position = await new Promise((resolve, reject) => {
-		navigator.geolocation.getCurrentPosition(resolve, reject);
-	}).catch((error) => {
-		console.error('Error getting user location:', error);
-		throw error;
+	const position: GeolocationPosition | string = await new Promise((resolve) => {
+		navigator.geolocation.getCurrentPosition(
+			(position) => resolve(position),
+			(error) => {
+				console.warn('User denied location or unable to get location:', error.message);
+				resolve(`User denied location access or unable to get location`);
+			}
+		);
 	});
 
-	if (!position) {
-		return 'Location not available';
+	if (typeof position === 'string') {
+		return position;
 	}
 
 	// Extract the latitude and longitude from the position

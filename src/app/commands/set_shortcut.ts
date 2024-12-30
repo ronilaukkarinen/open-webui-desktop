@@ -12,7 +12,7 @@ export async function setShortcut(keybind: string): Promise<boolean> {
 	}
 
 	// get config
-	let config = await store.get<AppConfig>('config');
+	const config = await store.get<AppConfig>('config');
 	if (!config) {
 		throw new Error('Failed to get App Config');
 	}

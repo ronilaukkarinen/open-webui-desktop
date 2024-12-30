@@ -24,13 +24,13 @@ export default async function onShortcut(event: ShortcutEvent) {
 	}
 
 	// get state
-	let state = await store.get<AppState>('state');
+	const state = await store.get<AppState>('state');
 	if (!state) {
 		throw new Error('Failed to get App State');
 	}
 
 	// get config
-	let config = await store.get<AppConfig>('config');
+	const config = await store.get<AppConfig>('config');
 	if (!config) {
 		throw new Error('Failed to get App Config');
 	}
@@ -52,11 +52,11 @@ export default async function onShortcut(event: ShortcutEvent) {
 		return;
 	}
 
-	let lastChatTime = state.lastChatTime;
-	let timeSinceLastChat = Date.now() - lastChatTime;
-	let companionChatOpen = state.companionChatOpen;
-	let resetChatTime = resetChatTimePreferenceToSeconds(config.resetChatTimePreference);
-	let chatBarPosition = config.chatBarPositionPreference;
+	const lastChatTime = state.lastChatTime;
+	const timeSinceLastChat = Date.now() - lastChatTime;
+	const companionChatOpen = state.companionChatOpen;
+	const resetChatTime = resetChatTimePreferenceToSeconds(config.resetChatTimePreference);
+	const chatBarPosition = config.chatBarPositionPreference;
 	console.log('timeSinceLastChat', timeSinceLastChat, 'resetChatTime', resetChatTime);
 	if (companionChatOpen && timeSinceLastChat > resetChatTime) {
 		await window.emitTo('chatbar', COMPANION_CHAT_EXPIRED);

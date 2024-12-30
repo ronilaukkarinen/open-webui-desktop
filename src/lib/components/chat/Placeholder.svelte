@@ -7,7 +7,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { config, user, models as _models, temporaryChatEnabled } from '$lib/stores';
+	import { config, user, models as _models, temporaryChatEnabled, type Model } from '$lib/stores';
 	import { sanitizeResponseContent } from '$lib/utils';
 	import { WEBUI_BASE_URL } from '$lib/stores';
 
