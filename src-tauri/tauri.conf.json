@@ -51,7 +51,7 @@
 	"bundle": {
 		"active": true,
 		"macOS": {
-			"entitlements": "Release.entitlements",
+			"entitlements": "Entitlements.plist",
 			"exceptionDomain": "",
 			"frameworks": []
 		},

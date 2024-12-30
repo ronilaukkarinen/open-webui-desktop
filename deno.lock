@@ -63,7 +63,6 @@
     "npm:lowlight@^3.3.0": "3.3.0",
     "npm:marked@^9.1.0": "9.1.6",
     "npm:mermaid@^10.9.3": "10.9.3_cytoscape@3.30.4",
-    "npm:onnxruntime-web@^1.20.1": "1.20.1",
     "npm:paneforge@^0.0.6": "0.0.6_svelte@4.2.19",
     "npm:panzoom@^9.4.3": "9.4.3",
     "npm:postcss@^8.4.31": "8.4.49",
@@ -662,7 +661,7 @@
       "dependencies": [
         "@huggingface/jinja",
         "onnxruntime-node",
-        "onnxruntime-web@1.21.0-dev.20241205-d27fecd3d3",
+        "onnxruntime-web",
         "sharp"
       ]
     },
@@ -3804,17 +3803,6 @@
         "tar"
       ]
     },
-    "onnxruntime-web@1.20.1": {
-      "integrity": "sha512-TePF6XVpLL1rWVMIl5Y9ACBQcyCNFThZON/jgElNd9Txb73CIEGlklhYR3UEr1cp5r0rbGI6nDwwrs79g7WjoA==",
-      "dependencies": [
-        "flatbuffers",
-        "guid-typescript",
-        "long",
-        "onnxruntime-common@1.20.1",
-        "platform",
-        "protobufjs"
-      ]
-    },
     "onnxruntime-web@1.21.0-dev.20241205-d27fecd3d3": {
       "integrity": "sha512-neeC9mv1sFWjUFrTaDl7enufNxbtSSTwR5V2i35ga4yXWS6r1MbpUwWwD1X+VKANujbSG8M5pk/ohRAOm2QhMQ==",
       "dependencies": [
@@ -5313,7 +5301,6 @@
         "npm:lowlight@^3.3.0",
         "npm:marked@^9.1.0",
         "npm:mermaid@^10.9.3",
-        "npm:onnxruntime-web@^1.20.1",
         "npm:paneforge@^0.0.6",
         "npm:panzoom@^9.4.3",
         "npm:postcss@^8.4.31",
