@@ -1,27 +1,27 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import moveChatBar from '../../../app/actions/move_chatbar';
-	import {
-		appConfig,
-		config,
-		temporaryChatEnabled,
-		tools,
-		user,
-		settings,
-		WEBUI_NAME,
-		theme,
-		models,
-		appState
-	} from '$lib/stores';
-	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
-	import { Toaster } from 'svelte-sonner';
-	import { APP_STORES_CHANGED, CHATBAR_WINDOW_LABEL } from '../../../app/constants';
-	import { getCurrentWindow, Window } from '@tauri-apps/api/window';
-	import { setShortcut } from '../../../app/commands/set_shortcut';
-	import { register, unregister, type ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
-	import { applyTheme } from '$lib/utils';
 	import { getModels } from '$lib/apis';
 	import { getTools } from '$lib/apis/tools';
+	import {
+		appConfig,
+		appState,
+		config,
+		models,
+		settings,
+		temporaryChatEnabled,
+		theme,
+		tools,
+		user,
+		WEBUI_NAME
+	} from '$lib/stores';
+	import { applyTheme } from '$lib/utils';
+	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
+	import { getCurrentWindow } from '@tauri-apps/api/window';
+	import { register, unregister, type ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
+	import { onMount } from 'svelte';
+	import { Toaster } from 'svelte-sonner';
+	import moveChatBar from '../../../app/actions/move_chatbar';
+	import { setShortcut } from '../../../app/commands/set_shortcut';
+	import { APP_STORES_CHANGED } from '../../../app/constants';
 
 	interface StoreChangedPayload {
 		store_name:

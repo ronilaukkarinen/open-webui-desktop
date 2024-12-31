@@ -1,23 +1,16 @@
 <script>
 	import { toast } from 'svelte-sonner';
 
-	import { onMount, getContext } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { getContext, onMount } from 'svelte';
 
 	import { getBackendConfig } from '$lib/apis';
-	import { ldapUserSignIn, getSessionUser, userSignIn, userSignUp } from '$lib/apis/auths';
+	import { getSessionUser, ldapUserSignIn, userSignIn, userSignUp } from '$lib/apis/auths';
 
-	import {
-		WEBUI_API_BASE_URL,
-		WEBUI_BASE_URL,
-		WEBUI_NAME,
-		config,
-		user,
-		socket
-	} from '$lib/stores';
+	import { WEBUI_BASE_URL, WEBUI_NAME, config, socket, user } from '$lib/stores';
 
-	import { generateInitialsImage, canvasPixelTest } from '$lib/utils';
+	import { generateInitialsImage } from '$lib/utils';
 
 	import Spinner from '$lib/components/common/Spinner.svelte';
 	import OnBoarding from '$lib/components/OnBoarding.svelte';
@@ -33,6 +26,11 @@
 	let password = '';
 
 	let ldapUsername = '';
+
+	$: if ($user) {
+		console.log('USER CHANGED', $user);
+		goto('/');
+	}
 
 	const setSessionUser = async (sessionUser) => {
 		if (sessionUser) {

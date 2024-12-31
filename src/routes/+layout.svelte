@@ -1,48 +1,43 @@
 <script lang="ts">
-	import '../tailwind.css';
-	import '../app.css';
 	import 'tippy.js/dist/tippy.css';
+	import '../app.css';
+	import '../tailwind.css';
 
-	import { io } from 'socket.io-client';
-	import { spring } from 'svelte/motion';
-	import { onMount, tick, setContext } from 'svelte';
-	import {
-		config,
-		user,
-		theme,
-		WEBUI_NAME,
-		mobile,
-		socket,
-		activeUserCount,
-		USAGE_POOL,
-		models,
-		tools,
-		banners
-	} from '$lib/stores';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { getBackendConfig, getModels } from '$lib/apis';
+	import { getBackendConfig } from '$lib/apis';
 	import { getSessionUser } from '$lib/apis/auths';
-	import { WEBUI_BASE_URL } from '$lib/stores';
-	import i18n, { initI18n, getLanguages } from '$lib/i18n';
+	import Draggable from '$lib/components/desktop-app/Draggable.svelte';
+	import i18n, { getLanguages, initI18n } from '$lib/i18n';
+	import {
+		activeUserCount,
+		appConfig,
+		appState,
+		config,
+		mobile,
+		socket,
+		theme,
+		USAGE_POOL,
+		user,
+		WEBUI_BASE_URL,
+		WEBUI_NAME
+	} from '$lib/stores';
 	import { bestMatchingLanguage } from '$lib/utils';
-	import { getBanners } from '$lib/apis/configs';
-	import { getTools } from '$lib/apis/tools';
+	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
+	import { getCurrentWindow } from '@tauri-apps/api/window';
+	import { unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 	import { load, Store } from '@tauri-apps/plugin-store';
-	import { appState, appConfig } from '$lib/stores';
+	import { io } from 'socket.io-client';
+	import { onMount, setContext, tick } from 'svelte';
+	import { spring } from 'svelte/motion';
+	import reopenMainWindow from '../app/actions/reopen_main_window';
+	import { CHATBAR_WINDOW_LABEL, DEFAULT_CONFIG, DEFAULT_STATE } from '../app/constants';
 	import {
 		areAppConfigsEqual,
 		areAppStatesEqual,
 		type AppConfig,
 		type AppState
 	} from '../app/state';
-	import { unregisterAll } from '@tauri-apps/plugin-global-shortcut';
-	import { DEFAULT_CONFIG, DEFAULT_STATE, MAIN_WINDOW_OPTIONS } from '../app/constants';
-	import { Window } from '@tauri-apps/api/window';
-	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
-	import Draggable from '$lib/components/desktop-app/Draggable.svelte';
-	import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
-	import reopenMainWindow from '../app/actions/reopen_main_window';
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -154,6 +149,11 @@
 
 		let unlistenReopen: UnlistenFn;
 		(async () => {
+			// Redirect chatbar to /desktop-app/chatbar
+			if (getCurrentWindow().label === CHATBAR_WINDOW_LABEL && window.location.pathname === '/') {
+				await goto('/desktop-app/chatbar');
+			}
+
 			/////////////////////////////////
 			// INITIALIZE APP STATE
 			/////////////////////////////////
