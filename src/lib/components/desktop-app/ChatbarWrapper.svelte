@@ -2,7 +2,7 @@
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { onMount, tick } from 'svelte';
 	import { CHATBAR_WINDOW_SIZE, COMPANION_CHAT_SIZE } from '../../../app/constants';
-	import moveChatBar from '../../../app/actions/move_chatbar';
+	import moveChatBar from '../../../app/actions/move-chatbar';
 	import { appConfig } from '$lib/stores';
 
 	const window = getCurrentWindow();

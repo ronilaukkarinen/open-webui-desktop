@@ -2,7 +2,7 @@
 	import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 	import { onMount } from 'svelte';
 	import { COMPANION_CHAT_SIZE } from '../../../app/constants';
-	import moveChatBar from '../../../app/actions/move_chatbar';
+	import moveChatBar from '../../../app/actions/move-chatbar';
 	import { appConfig } from '$lib/stores';
 	import XMark from '../icons/XMark.svelte';
 	import PencilSquare from '../icons/PencilSquare.svelte';

@@ -2,7 +2,7 @@ import { appConfig, appState } from '$lib/stores';
 import { Window } from '@tauri-apps/api/window';
 import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
 import { get } from 'svelte/store';
-import moveChatBar from '../actions/move_chatbar';
+import moveChatBar from '../actions/move-chatbar';
 import { CHATBAR_WINDOW_LABEL, CHATBAR_WINDOW_SIZE, COMPANION_CHAT_EXPIRED } from '../constants';
 import { resetChatTimePreferenceToSeconds } from '../state';
 

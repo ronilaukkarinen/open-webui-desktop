@@ -1,13 +1,13 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { Store } from '@tauri-apps/plugin-store';
+import { getStore, load, Store } from '@tauri-apps/plugin-store';
 import equal from 'fast-deep-equal';
 import { get, writable, type Writable } from 'svelte/store';
 import { APP_STORE_FILE } from '../../app/constants';
 
 export function crossWindowWritable<T>(
+	name: string,
 	initialValue?: T,
-	persist: boolean = false,
-	name: string = 'random'
+	persist: boolean = false
 ): Writable<T> {
 	console.debug('Creating cross window store for', name);
 	const wrappedStore = writable<T>(initialValue);
@@ -17,18 +17,25 @@ export function crossWindowWritable<T>(
 	// Initialize store connection asynchronously
 	storePromise = (async () => {
 		try {
-			const store = await Store.load(APP_STORE_FILE, { autoSave: false, createNew: false });
+			const store =
+				(await getStore(APP_STORE_FILE)) ||
+				(await load(APP_STORE_FILE, { autoSave: false, createNew: false }));
 
 			// Get initial value from store
 			const stored = await store.get(name);
 			await store.save();
 			if (stored !== undefined) {
 				currentValue = stored as T;
+				console.debug('currentValue from store for', name, 'is', currentValue);
 				wrappedStore.set(currentValue);
+			} else if (initialValue !== undefined) {
+				console.debug('currentValue from initialValue for', name, 'is', currentValue);
+				await store.set(name, initialValue);
+				await store.save();
 			}
 
 			// Subscribe to changes from other windows
-			await store.onKeyChange(name, async (newValue: T | undefined) => {
+			const unlistener = await store.onKeyChange(name, async (newValue: T | undefined) => {
 				console.debug(name, 'onKeyChange event', await store.entries());
 				if (newValue === undefined) {
 					console.warn(`Store value changed to undefined for ${name}, skipping update`);
@@ -46,6 +53,8 @@ export function crossWindowWritable<T>(
 				wrappedStore.set(newValue);
 			});
 
+			getCurrentWindow().once('tauri://close-requested', unlistener);
+
 			return store;
 		} catch (e) {
 			console.error(`Failed to initialize store for ${name}:`, e);
@@ -53,33 +62,18 @@ export function crossWindowWritable<T>(
 		}
 	})();
 
-	// If persist is not true, destroy the store value when the window is destroyed
-	if (!persist) {
-		getCurrentWindow().once('tauri://destroyed', async () => {
-			let store;
-			if (!storePromise || !(store = await storePromise)) {
-				throw new Error('Store is not initialized');
-			}
-			await store.delete(name);
-			await store.save();
-		});
-	}
-
 	return {
 		set: (value: T) => {
 			if (!equal(currentValue, value)) {
 				currentValue = value;
 				wrappedStore.set(value);
 
-				if (!storePromise) {
-					throw new Error('Store is not initialized');
-				}
 				storePromise.then(async (store) => {
 					if (store) {
 						await store.set(name, value);
 						await store.save();
 					} else {
-						console.error('Store is not initialized');
+						console.error('Store failed to initialized');
 					}
 				});
 			}
@@ -91,15 +85,12 @@ export function crossWindowWritable<T>(
 				currentValue = newValue;
 				wrappedStore.set(newValue);
 
-				if (!storePromise) {
-					throw new Error('Store is not initialized');
-				}
 				storePromise.then(async (store) => {
 					if (store) {
 						await store.set(name, newValue);
 						await store.save();
 					} else {
-						console.error('Store is not initialized');
+						console.error('Store failed to initialized');
 					}
 				});
 			}

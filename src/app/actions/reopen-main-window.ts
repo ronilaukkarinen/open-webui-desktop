@@ -1,7 +1,7 @@
+import type { Event } from '@tauri-apps/api/event';
+import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { Window } from '@tauri-apps/api/window';
 import { MAIN_WINDOW_OPTIONS } from '../constants';
-import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
-import type { Event } from '@tauri-apps/api/event';
 
 /**
  * Reopen the main window ONLY IF it's closed.
@@ -12,7 +12,7 @@ export default async function reopenMainWindow() {
 		console.debug('Main window already open.');
 		return;
 	} else {
-		return new Promise<void>(async (resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			console.debug('Main window closed, reopening...');
 			try {
 				const window = new WebviewWindow('main', MAIN_WINDOW_OPTIONS);

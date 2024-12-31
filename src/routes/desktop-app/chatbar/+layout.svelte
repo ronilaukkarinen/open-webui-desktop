@@ -6,8 +6,8 @@
 	import { register, unregister, type ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
-	import moveChatBar from '../../../app/actions/move_chatbar';
-	import { setShortcut } from '../../../app/commands/set_shortcut';
+	import moveChatBar from '../../../app/actions/move-chatbar';
+	import { setShortcut } from '../../../app/commands/set-shortcut';
 
 	$: {
 		localStorage.setItem('theme', $theme);

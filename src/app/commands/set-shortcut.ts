@@ -1,6 +1,6 @@
 import { register, unregister } from '@tauri-apps/plugin-global-shortcut';
 import { DEFAULT_CONFIG } from '../constants';
-import onShortcut from '../handlers/on_shortcut';
+import onShortcut from '../handlers/on-shortcut';
 
 export async function setShortcut(keybind: string, oldKeybind?: string): Promise<boolean> {
 	try {

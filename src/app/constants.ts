@@ -52,5 +52,6 @@ export const MAIN_WINDOW_OPTIONS = {
 	titleBarStyle: 'overlay',
 	hiddenTitle: true,
 	resizable: true,
-	minimizable: true
+	minimizable: true,
+	devtools: true
 } as const;

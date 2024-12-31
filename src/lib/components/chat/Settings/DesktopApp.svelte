@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { toast } from 'svelte-sonner';
-	import { createEventDispatcher, onMount, getContext } from 'svelte';
-	import { appConfig } from '$lib/stores';
-	import type { ChatBarPosition, ResetChatTime } from '../../../../app/state';
-	import type { Writable } from 'svelte/store';
-	import type { i18n as i18nT } from 'i18next';
 	import Switch from '$lib/components/common/Switch.svelte';
-	import ShortcutEntry from './DesktopApp/ShortcutEntry.svelte';
-	import { setShortcut } from '../../../../app/commands/set_shortcut';
+	import { appConfig } from '$lib/stores';
 	import { delay } from '$lib/utils';
-	import { isRegistered, unregister } from '@tauri-apps/plugin-global-shortcut';
 	import * as autoStart from '@tauri-apps/plugin-autostart';
+	import { isRegistered, unregister } from '@tauri-apps/plugin-global-shortcut';
+	import type { i18n as i18nT } from 'i18next';
+	import { createEventDispatcher, getContext, onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import type { Writable } from 'svelte/store';
+	import { setShortcut } from '../../../../app/commands/set-shortcut';
+	import type { ChatBarPosition, ResetChatTime } from '../../../../app/state';
+	import ShortcutEntry from './DesktopApp/ShortcutEntry.svelte';
 
 	const BANNED_SHORTCUTS = [
 		'cmd+c',
@@ -74,12 +74,13 @@
 		// sets shortcut and saves to config
 
 		console.debug('Right before set:', keyboardShortcut);
+		let shortcut = $appConfig.shortcut;
 		if (keyboardShortcut !== $appConfig.shortcut) {
 			if (keyboardShortcut === '') {
 				await unregister($appConfig.shortcut);
-				$appConfig.shortcut = '';
+				shortcut = '';
 			} else if (await setShortcut(keyboardShortcut, $appConfig.shortcut)) {
-				$appConfig.shortcut = keyboardShortcut;
+				shortcut = keyboardShortcut;
 			} else {
 				keyboardShortcut = $appConfig.shortcut;
 				delay(50).then(() => toast.warning($i18n.t('Failed to set shortcut. Please try again.')));
@@ -96,11 +97,14 @@
 			console.error('Failed to set launch at login to', launchAtLogin, e);
 		}
 
-		$appConfig.chatBarPositionPreference = positionOnScreen;
-		$appConfig.resetChatTimePreference = resetToNewChat;
-
-		$appConfig.openChatsInCompanion = openNewChatsInCompanion === 'true';
-		$appConfig.openLinksInApp = openLinksInApp;
+		$appConfig = {
+			...$appConfig,
+			shortcut,
+			chatBarPositionPreference: positionOnScreen,
+			resetChatTimePreference: resetToNewChat,
+			openChatsInCompanion: openNewChatsInCompanion === 'true',
+			openLinksInApp
+		};
 
 		console.debug('After:', $appConfig);
 		dispatch('save');

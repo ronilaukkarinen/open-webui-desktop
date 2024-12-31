@@ -1,7 +1,7 @@
 <script lang="ts">
 	// @ts-expect-error issue with uuid but it works
-	import { v4 as uuidv4 } from 'uuid';
 	import mermaid from 'mermaid';
+	import { v4 as uuidv4 } from 'uuid';
 
 	import { getContext, onDestroy, onMount, tick } from 'svelte';
 	const i18n: Writable<i18nType> = getContext('i18n');
@@ -9,31 +9,30 @@
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import { writable, type Unsubscriber, type Writable } from 'svelte/store';
-	import type { i18n as i18nType } from 'i18next';
 	import { WEBUI_BASE_URL } from '$lib/stores';
+	import type { i18n as i18nType } from 'i18next';
+	import { type Unsubscriber, type Writable } from 'svelte/store';
 
 	import {
+		tags as allTags,
+		appState,
 		chatId,
 		chats,
-		config,
-		type Model,
-		models,
-		tags as allTags,
-		settings,
-		user,
-		socket,
-		showControls,
-		showCallOverlay,
-		currentChatPage,
-		temporaryChatEnabled,
-		mobile,
-		showOverview,
 		chatTitle,
+		config,
+		currentChatPage,
+		mobile,
+		models,
+		settings,
 		showArtifacts,
+		showCallOverlay,
+		showControls,
+		showOverview,
+		socket,
+		temporaryChatEnabled,
 		tools,
-		appConfig,
-		appState
+		user,
+		type Model
 	} from '$lib/stores';
 	import {
 		convertMessagesToHistory,
@@ -43,7 +42,13 @@
 		splitStream
 	} from '$lib/utils';
 
-	import { generateChatCompletion } from '$lib/apis/ollama';
+	import {
+		chatCompleted,
+		generateMoACompletion,
+		generateQueries,
+		generateTags,
+		generateTitle
+	} from '$lib/apis';
 	import {
 		addTagById,
 		createNewChat,
@@ -54,29 +59,23 @@
 		getTagsById,
 		updateChatById
 	} from '$lib/apis/chats';
+	import { queryMemory } from '$lib/apis/memories';
+	import { generateChatCompletion } from '$lib/apis/ollama';
 	import { generateOpenAIChatCompletion } from '$lib/apis/openai';
 	import { processWeb, processWebSearch, processYoutubeVideo } from '$lib/apis/retrieval';
 	import { createOpenAITextStream } from '$lib/apis/streaming';
-	import { queryMemory } from '$lib/apis/memories';
 	import { getAndUpdateUserLocation, getUserSettings } from '$lib/apis/users';
-	import {
-		chatCompleted,
-		generateTitle,
-		generateQueries,
-		generateTags,
-		generateMoACompletion
-	} from '$lib/apis';
 
-	import MessageInput from './MessageInput.svelte';
 	import { getTools } from '$lib/apis/tools';
+	import { emitTo, listen, type UnlistenFn } from '@tauri-apps/api/event';
+	import { getCurrentWindow } from '@tauri-apps/api/window';
+	import { toast } from 'svelte-sonner';
+	import reopenMainWindow from '../../../app/actions/reopen-main-window';
+	import { COMPANION_CHAT_EXPIRED, OPEN_IN_MAIN_WINDOW } from '../../../app/constants';
+	import Messages from '../chat/Messages.svelte';
 	import ChatbarWrapper from './ChatbarWrapper.svelte';
 	import CompanionChatWrapper from './CompanionChatWrapper.svelte';
-	import Messages from '../chat/Messages.svelte';
-	import { toast } from 'svelte-sonner';
-	import { getCurrentWindow } from '@tauri-apps/api/window';
-	import { COMPANION_CHAT_EXPIRED, OPEN_IN_MAIN_WINDOW } from '../../../app/constants';
-	import { emitTo, listen, type UnlistenFn } from '@tauri-apps/api/event';
-	import reopenMainWindow from '../../../app/actions/reopen_main_window';
+	import MessageInput from './MessageInput.svelte';
 
 	export let chatIdProp = '';
 
@@ -116,7 +115,7 @@
 	$: companionChatOpen = !!chatIdProp || createMessagesList(history.currentId).length > 0;
 	$: {
 		console.log('Updating companionChatOpen', companionChatOpen);
-		$appState.companionChatOpen = companionChatOpen;
+		$appState = { ...$appState, companionChatOpen };
 	}
 
 	let chat = null;
@@ -871,7 +870,7 @@
 	const submitPrompt = async (userPrompt, { _raw = false } = {}) => {
 		console.log('submitPrompt', userPrompt, $chatId);
 
-		$appState.lastChatTime = Date.now();
+		$appState = { ...$appState, lastChatTime: Date.now() };
 
 		const messages = createMessagesList(history.currentId);
 		const _selectedModels = selectedModels.map((modelId) =>
