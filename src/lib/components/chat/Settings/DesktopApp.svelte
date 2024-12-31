@@ -4,7 +4,7 @@
 	import { appConfig } from '$lib/stores';
 	import type { ChatBarPosition, ResetChatTime } from '../../../../app/state';
 	import type { Writable } from 'svelte/store';
-	import type { i18n } from 'i18next';
+	import type { i18n as i18nT } from 'i18next';
 	import Switch from '$lib/components/common/Switch.svelte';
 	import ShortcutEntry from './DesktopApp/ShortcutEntry.svelte';
 	import { setShortcut } from '../../../../app/commands/set_shortcut';
@@ -32,7 +32,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	const i18n: Writable<i18n> = getContext('i18n');
+	const i18n: Writable<i18nT> = getContext('i18n');
 
 	// Settings
 	let positionOnScreen: ChatBarPosition;
@@ -78,7 +78,7 @@
 			if (keyboardShortcut === '') {
 				await unregister($appConfig.shortcut);
 				$appConfig.shortcut = '';
-			} else if (await setShortcut(keyboardShortcut)) {
+			} else if (await setShortcut(keyboardShortcut, $appConfig.shortcut)) {
 				$appConfig.shortcut = keyboardShortcut;
 			} else {
 				keyboardShortcut = $appConfig.shortcut;

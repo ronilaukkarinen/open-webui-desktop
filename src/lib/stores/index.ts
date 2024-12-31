@@ -5,11 +5,12 @@ import type { Socket } from 'socket.io-client';
 import { derived, type Writable, writable } from 'svelte/store';
 import { DEFAULT_STATE } from '../../app/constants';
 import { type AppConfig } from '../../app/state';
+import { crossWindowWritable } from './cross-window-writable';
 
 // Backend
 export const WEBUI_NAME = writable(APP_NAME);
-export const config: Writable<Config | undefined> = writable(undefined);
-export const user: Writable<SessionUser | undefined> = writable(undefined);
+export const config = crossWindowWritable<Config>(undefined, false, 'config');
+export const user = crossWindowWritable<SessionUser>(undefined, false, 'user');
 
 // Desktop app
 export const WEBUI_HOSTNAME = writable('localhost:8080');
@@ -51,25 +52,24 @@ export const socket: Writable<null | Socket> = writable(null);
 export const activeUserCount: Writable<null | number> = writable(null);
 export const USAGE_POOL: Writable<null | string[]> = writable(null);
 
-export const theme = writable('system');
+export const theme = crossWindowWritable('system', false, 'theme');
 
 export const chatId = writable('');
 export const chatTitle = writable('');
 
-export const chats = writable([]);
+export const chats = crossWindowWritable<[]>([], false, 'chats');
 export const pinnedChats = writable([]);
 export const tags = writable([]);
 
-export const models: Writable<Model[]> = writable([]);
-
-export const prompts: Writable<null | Prompt[]> = writable(null);
-export const knowledge: Writable<null | Document[]> = writable(null);
-export const tools = writable(null);
-export const functions = writable(null);
+export const models = crossWindowWritable<Model[]>([], false, 'models');
+export const prompts = crossWindowWritable<Prompt[] | null>(null, false, 'prompts');
+export const knowledge = crossWindowWritable<Document[] | null>(null, false, 'knowledge');
+export const tools = crossWindowWritable<[] | null>(null, false, 'tools');
+export const functions = crossWindowWritable(null, false, 'functions');
 
 export const banners: Writable<Banner[]> = writable([]);
 
-export const settings= writable<Settings>(undefined);
+export const settings = crossWindowWritable<Settings>(undefined, false, 'settings');
 
 export const showSidebar = writable(false);
 export const showSettings = writable(false);
@@ -81,12 +81,12 @@ export const showOverview = writable(false);
 export const showArtifacts = writable(false);
 export const showCallOverlay = writable(false);
 
-export const temporaryChatEnabled = writable(false);
+export const temporaryChatEnabled = crossWindowWritable(false, false, 'temporaryChatEnabled');
 export const scrollPaginationEnabled = writable(false);
 export const currentChatPage = writable(1);
 
-export const appState = writable(DEFAULT_STATE);
-export const appConfig = writable<AppConfig>(undefined);
+export const appState = crossWindowWritable(DEFAULT_STATE, false, 'appState');
+export const appConfig = crossWindowWritable<AppConfig>(undefined, true, 'appConfig');
 
 export type Model = OpenAIModel | OllamaModel;
 

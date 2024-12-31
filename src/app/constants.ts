@@ -2,7 +2,7 @@ import { LogicalSize } from '@tauri-apps/api/window';
 import type { AppConfig, AppState } from './state';
 
 // Store files
-export const APP_STORE_FILE = 'app.json';
+export const APP_STORE_FILE = 'stores.json';
 
 // window labels
 export const CHATBAR_WINDOW_LABEL = 'chatbar';

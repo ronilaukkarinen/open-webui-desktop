@@ -1,15 +1,10 @@
-import { getStore } from '@tauri-apps/plugin-store';
+import { appConfig, appState } from '$lib/stores';
 import { Window } from '@tauri-apps/api/window';
-import {
-	APP_STORE_FILE,
-	CHATBAR_WINDOW_LABEL,
-	CHATBAR_WINDOW_SIZE,
-	COMPANION_CHAT_EXPIRED,
-	DEFAULT_STATE
-} from '../constants';
-import moveChatBar from '../actions/move_chatbar';
-import { resetChatTimePreferenceToSeconds, type AppConfig, type AppState } from '../state';
 import type { ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
+import { get } from 'svelte/store';
+import moveChatBar from '../actions/move_chatbar';
+import { CHATBAR_WINDOW_LABEL, CHATBAR_WINDOW_SIZE, COMPANION_CHAT_EXPIRED } from '../constants';
+import { resetChatTimePreferenceToSeconds } from '../state';
 
 export default async function onShortcut(event: ShortcutEvent) {
 	console.log('onShortcut');
@@ -17,20 +12,14 @@ export default async function onShortcut(event: ShortcutEvent) {
 		return;
 	}
 
-	// get store
-	const store = await getStore(APP_STORE_FILE);
-	if (!store) {
-		throw new Error('Failed to get store');
-	}
-
 	// get state
-	const state = await store.get<AppState>('state');
+	const state = get(appState);
 	if (!state) {
 		throw new Error('Failed to get App State');
 	}
 
 	// get config
-	const config = await store.get<AppConfig>('config');
+	const config = get(appConfig);
 	if (!config) {
 		throw new Error('Failed to get App Config');
 	}
@@ -72,6 +61,4 @@ export default async function onShortcut(event: ShortcutEvent) {
 	await window.show();
 	await window.setFocus();
 	document.getElementById('chat-input')?.focus();
-
-	await store.set('state', state);
 }

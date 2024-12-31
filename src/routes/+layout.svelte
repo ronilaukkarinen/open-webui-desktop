@@ -26,18 +26,12 @@
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { unregisterAll } from '@tauri-apps/plugin-global-shortcut';
-	import { load, Store } from '@tauri-apps/plugin-store';
+	import { load } from '@tauri-apps/plugin-store';
 	import { io } from 'socket.io-client';
 	import { onMount, setContext, tick } from 'svelte';
 	import { spring } from 'svelte/motion';
 	import reopenMainWindow from '../app/actions/reopen_main_window';
-	import { CHATBAR_WINDOW_LABEL, DEFAULT_CONFIG, DEFAULT_STATE } from '../app/constants';
-	import {
-		areAppConfigsEqual,
-		areAppStatesEqual,
-		type AppConfig,
-		type AppState
-	} from '../app/state';
+	import { APP_STORE_FILE, CHATBAR_WINDOW_LABEL } from '../app/constants';
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -45,49 +39,6 @@
 
 	// Initialize i18n
 	setContext('i18n', i18n);
-
-	// App State store
-	let store: Store | undefined;
-
-	// Subscribe to app state changes in the app and update the store
-	$: if (store) {
-		(async () => {
-			if (!$appState) {
-				console.warn('App State changed to undefined in app, skipping update');
-				return;
-			}
-			let state: AppState | undefined = await store.get('state');
-			if (areAppStatesEqual(state, $appState)) {
-				console.debug('App State idempotent change in app, skipping update');
-				return;
-			}
-			console.log('Saving App State to store');
-			await store.set('state', $appState);
-			await store.save();
-		})();
-	} else {
-		console.warn('App State changed in the app, but the Store has not been loaded yet');
-	}
-
-	// Subscribe to config changes in the app and update the store
-	$: if (store) {
-		(async () => {
-			if (!$appConfig) {
-				console.warn('App Config changed to undefined in app, skipping update');
-				return;
-			}
-			let config: AppConfig | undefined = await store.get('config');
-			if (areAppConfigsEqual(config, $appConfig)) {
-				console.debug('App Config idempotent change in app, skipping update');
-				return;
-			}
-			console.log('Saving App Config to store');
-			await store.set('config', $appConfig);
-			await store.save();
-		})();
-	} else {
-		console.warn('App Config changed in the app, but the Store has not been loaded yet');
-	}
 
 	let loaded = false;
 	const BREAKPOINT = 768;
@@ -149,6 +100,9 @@
 
 		let unlistenReopen: UnlistenFn;
 		(async () => {
+			// Load the store
+			await load(APP_STORE_FILE, { autoSave: false, createNew: false });
+
 			// Redirect chatbar to /desktop-app/chatbar
 			if (getCurrentWindow().label === CHATBAR_WINDOW_LABEL && window.location.pathname === '/') {
 				await goto('/desktop-app/chatbar');
@@ -162,37 +116,6 @@
 			unlistenReopen = await listen('reopen', async () => {
 				await reopenMainWindow();
 			});
-
-			// Load the store
-			store = await load('app.json', { autoSave: true, createNew: false });
-
-			// Subscribe to state changes in the store and update the app
-			await store.onKeyChange('state', (state: AppState | undefined) => {
-				if (!state) {
-					console.warn('App State changed to undefined in store, skipping update');
-					return;
-				} else if (areAppStatesEqual(state, $appState)) {
-					console.debug('App State idempotent change in store, skipping update');
-					return;
-				}
-				$appState = state;
-			});
-
-			// Subscribe to config changes in the store and update the app
-			await store.onKeyChange('config', (config: AppConfig | undefined) => {
-				if (!config) {
-					console.warn('App Config changed to undefined in store, skipping update');
-					return;
-				} else if (areAppConfigsEqual(config, $appConfig)) {
-					console.debug('App Config idempotent change in store, skipping update');
-					return;
-				}
-				$appConfig = config;
-			});
-
-			// Load default app state on launch
-			$appState = DEFAULT_STATE;
-			$appConfig = (await store.get('config')) || DEFAULT_CONFIG;
 
 			console.log('Initial app state:', $appState, $appConfig);
 

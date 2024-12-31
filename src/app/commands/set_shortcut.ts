@@ -1,30 +1,12 @@
 import { register, unregister } from '@tauri-apps/plugin-global-shortcut';
-import { getStore } from '@tauri-apps/plugin-store';
+import { DEFAULT_CONFIG } from '../constants';
 import onShortcut from '../handlers/on_shortcut';
-import type { AppConfig } from '../state';
-import { APP_STORE_FILE } from '../constants';
 
-export async function setShortcut(keybind: string): Promise<boolean> {
-	// get store
-	const store = await getStore(APP_STORE_FILE);
-	if (!store) {
-		throw new Error('Failed to get store');
-	}
-
-	// get config
-	const config = await store.get<AppConfig>('config');
-	if (!config) {
-		throw new Error('Failed to get App Config');
-	}
-
-	console.log(Object.entries(config));
-
-	// get old keybind, set new keybind
-	const old_keybind = config.shortcut;
+export async function setShortcut(keybind: string, oldKeybind?: string): Promise<boolean> {
 	try {
 		// unregister old shortcut
-		if (old_keybind) {
-			await unregister(old_keybind);
+		if (oldKeybind) {
+			await unregister(oldKeybind);
 		}
 
 		// attempt to register new shortcut
@@ -32,9 +14,11 @@ export async function setShortcut(keybind: string): Promise<boolean> {
 		console.log('Set chatbar shortcut to', keybind);
 		return true;
 	} catch {
-		console.warn(`Shortcut ${keybind} is not valid, using ${old_keybind}`);
+		oldKeybind = oldKeybind || DEFAULT_CONFIG.shortcut;
+
+		console.warn(`Shortcut ${keybind} is not valid, using ${oldKeybind}`);
 		// re-register old shortcut
-		await register(old_keybind, onShortcut);
+		await register(oldKeybind, onShortcut);
 		return false;
 	}
 }

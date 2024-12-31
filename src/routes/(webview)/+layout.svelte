@@ -1,30 +1,11 @@
 <script lang="ts">
-	import { WEBUI_BASE_URL } from '$lib/stores';
-	import {
-		config,
-		models,
-		settings,
-		temporaryChatEnabled,
-		theme,
-		tools,
-		user,
-		WEBUI_NAME
-	} from '$lib/stores';
-	import { emit, listen, type UnlistenFn } from '@tauri-apps/api/event';
-	import { Toaster } from 'svelte-sonner';
-	import { APP_STORES_CHANGED, OPEN_IN_MAIN_WINDOW } from '../../app/constants';
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { theme, WEBUI_BASE_URL, WEBUI_NAME } from '$lib/stores';
+	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
-
-	// Provide store update to chatbar
-	$: emit(APP_STORES_CHANGED, { store_name: 'models', store: $models });
-	$: emit(APP_STORES_CHANGED, { store_name: 'settings', store: $settings });
-	$: emit(APP_STORES_CHANGED, { store_name: 'config', store: $config });
-	$: emit(APP_STORES_CHANGED, { store_name: 'user', store: $user });
-	$: emit(APP_STORES_CHANGED, { store_name: 'temporaryChatEnabled', store: $temporaryChatEnabled });
-	$: emit(APP_STORES_CHANGED, { store_name: 'tools', store: $tools });
-	$: emit(APP_STORES_CHANGED, { store_name: 'theme', store: $theme });
+	import { onMount } from 'svelte';
+	import { Toaster } from 'svelte-sonner';
+	import { OPEN_IN_MAIN_WINDOW } from '../../app/constants';
 
 	onMount(() => {
 		let unlistenOpenInMainWindow: UnlistenFn;
