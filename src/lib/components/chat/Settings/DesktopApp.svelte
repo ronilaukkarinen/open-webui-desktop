@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Switch from '$lib/components/common/Switch.svelte';
-	import { appConfig } from '$lib/stores';
+	import { appConfig, WEBUI_BASE_URL } from '$lib/stores';
 	import { delay } from '$lib/utils';
 	import * as autoStart from '@tauri-apps/plugin-autostart';
 	import { isRegistered, unregister } from '@tauri-apps/plugin-global-shortcut';
@@ -69,6 +70,9 @@
 	let openLinksInApp: boolean;
 	const openLinksInAppChangeHandler = () => {};
 
+	let webuiHostname: string;
+	const webuiHostnameChangeHandler = () => {};
+
 	const saveConfig = async () => {
 		console.debug('Saving settings. Before:', Object.entries($appConfig));
 		// sets shortcut and saves to config
@@ -108,6 +112,10 @@
 
 		console.debug('After:', $appConfig);
 		dispatch('save');
+
+		await delay(100);
+		$WEBUI_BASE_URL = webuiHostname;
+		await goto('/');
 	};
 
 	onMount(async () => {
@@ -117,6 +125,7 @@
 		openNewChatsInCompanion = $appConfig.openChatsInCompanion ? 'true' : 'false';
 		launchAtLogin = await autoStart.isEnabled();
 		openLinksInApp = $appConfig.openLinksInApp;
+		webuiHostname = $WEBUI_BASE_URL;
 	});
 </script>
 
@@ -124,6 +133,19 @@
 	<div class="overflow-y-scroll max-h-[28rem] lg:max-h-full">
 		<div class="">
 			<div class=" mb-1 text-sm font-medium">{$i18n.t('Desktop App Settings')}</div>
+
+			<div class="flex w-full justify-between">
+				<div class=" self-center text-xs font-medium">{$i18n.t('WebUI Base URL')}</div>
+				<div class="flex items-center relative">
+					<input
+						class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
+						type="text"
+						bind:value={webuiHostname}
+						placeholder="Enter Web UI Hostname"
+						on:input={webuiHostnameChangeHandler}
+					/>
+				</div>
+			</div>
 
 			<div class="flex w-full justify-between">
 				<div class=" self-center text-xs font-medium">{$i18n.t('Position on Screen')}</div>

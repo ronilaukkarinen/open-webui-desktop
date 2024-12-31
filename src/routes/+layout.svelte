@@ -24,13 +24,11 @@
 	} from '$lib/stores';
 	import { bestMatchingLanguage } from '$lib/utils';
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
-	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 	import { io } from 'socket.io-client';
 	import { onMount, setContext, tick } from 'svelte';
 	import { spring } from 'svelte/motion';
 	import reopenMainWindow from '../app/actions/reopen-main-window';
-	import { CHATBAR_WINDOW_LABEL } from '../app/constants';
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -99,11 +97,6 @@
 
 		let unlistenReopen: UnlistenFn;
 		(async () => {
-			// Redirect chatbar to /desktop-app/chatbar
-			if (getCurrentWindow().label === CHATBAR_WINDOW_LABEL && window.location.pathname === '/') {
-				await goto('/desktop-app/chatbar');
-			}
-
 			/////////////////////////////////
 			// INITIALIZE APP STATE
 			/////////////////////////////////

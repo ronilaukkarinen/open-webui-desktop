@@ -12,11 +12,16 @@ export const config = crossWindowWritable<Config>('config', undefined);
 export const user = crossWindowWritable<SessionUser>('user', undefined);
 
 // Desktop app
-export const WEBUI_HOSTNAME = writable('localhost:8080');
-export const WEBUI_BASE_URL = derived(
-	WEBUI_HOSTNAME,
-	($WEBUI_HOSTNAME) => `http://${$WEBUI_HOSTNAME}`
+// export const WEBUI_HOSTNAME = writable('localhost:8080');
+export const WEBUI_BASE_URL = crossWindowWritable<string>(
+	'webui_hostname',
+	'http://localhost:8080',
+	false
 );
+// export const WEBUI_BASE_URL = derived(
+// 	WEBUI_HOSTNAME,
+// 	($WEBUI_HOSTNAME) => `http://${$WEBUI_HOSTNAME}`
+// );
 export const WEBUI_API_BASE_URL = derived(
 	WEBUI_BASE_URL,
 	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/api/v1`
@@ -80,12 +85,12 @@ export const showOverview = writable(false);
 export const showArtifacts = writable(false);
 export const showCallOverlay = writable(false);
 
-export const temporaryChatEnabled = crossWindowWritable<boolean>('temporaryChatEnabled', false);
+export const temporaryChatEnabled = crossWindowWritable<boolean>('temporary_chat_enabled', false);
 export const scrollPaginationEnabled = writable(false);
 export const currentChatPage = writable(1);
 
-export const appState = crossWindowWritable('appState', DEFAULT_STATE);
-export const appConfig = crossWindowWritable('appConfig', DEFAULT_CONFIG, true);
+export const appState = crossWindowWritable('app_state', DEFAULT_STATE);
+export const appConfig = crossWindowWritable('app_config', DEFAULT_CONFIG, true);
 
 export type Model = OpenAIModel | OllamaModel;
 
