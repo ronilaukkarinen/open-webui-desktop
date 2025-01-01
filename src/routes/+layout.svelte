@@ -7,6 +7,8 @@
 	import { page } from '$app/stores';
 	import { getBackendConfig } from '$lib/apis';
 	import { getSessionUser } from '$lib/apis/auths';
+	import reopenMainWindow from '$lib/app/actions/reopen-main-window';
+	import { MAIN_WINDOW_LABEL, OPEN_IN_MAIN_WINDOW } from '$lib/app/constants';
 	import Draggable from '$lib/components/desktop-app/Draggable.svelte';
 	import i18n, { getLanguages, initI18n } from '$lib/i18n';
 	import {
@@ -24,11 +26,45 @@
 	} from '$lib/stores';
 	import { bestMatchingLanguage } from '$lib/utils';
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
+	import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
+	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { unregisterAll } from '@tauri-apps/plugin-global-shortcut';
+	import { debug, error, info, warn } from '@tauri-apps/plugin-log';
 	import { io } from 'socket.io-client';
 	import { onMount, setContext, tick } from 'svelte';
+	import { Toaster } from 'svelte-sonner';
 	import { spring } from 'svelte/motion';
-	import reopenMainWindow from '../app/actions/reopen-main-window';
+
+	// For debug purposes!
+	const routeLoggingToTauriConsole = async () => {
+		const _debug = console.debug;
+		const _log = console.log;
+		const _warn = console.warn;
+		const _error = console.error;
+		console.debug = (...data) => {
+			_debug(...data);
+			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
+			debug(str);
+		};
+
+		console.log = (...data) => {
+			_log(...data);
+			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
+			info(str);
+		};
+
+		console.warn = (...data) => {
+			_warn(...data);
+			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
+			warn(str);
+		};
+
+		console.error = (...data) => {
+			_error(...data);
+			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
+			error(str);
+		};
+	};
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -38,6 +74,7 @@
 	setContext('i18n', i18n);
 
 	let loaded = false;
+	const IS_MAIN_WINDOW = getCurrentWindow().label === MAIN_WINDOW_LABEL;
 	const BREAKPOINT = 768;
 
 	const setupSocket = () => {
@@ -96,15 +133,33 @@
 		};
 
 		let unlistenReopen: UnlistenFn;
+		let unlistenOpenInMainWindow: UnlistenFn;
 		(async () => {
+			await routeLoggingToTauriConsole();
+			await getCurrentWebviewWindow().clearAllBrowsingData();
+
 			/////////////////////////////////
 			// INITIALIZE APP STATE
 			/////////////////////////////////
 
-			// Reopen event listener
+			// Reopen main window event listener
 			unlistenReopen = await listen('reopen', async () => {
 				await reopenMainWindow();
 			});
+
+			//
+			unlistenOpenInMainWindow = await listen(
+				OPEN_IN_MAIN_WINDOW,
+				async (event: { payload: { chatId: string } }) => {
+					if (!event.payload || !event.payload.chatId) {
+						console.warn('open in main window called without chatId');
+						return;
+					}
+					await goto(`/c/${event.payload.chatId}`);
+					console.log('Chat', event.payload.chatId, 'opened in main window');
+					await getCurrentWindow().setFocus();
+				}
+			);
 
 			console.log('Initial app state:', $appState, $appConfig);
 
@@ -218,11 +273,30 @@
 
 			// Unlisten to Reopen event
 			unlistenReopen();
+
+			// Unlisten to Open in Main Window event
+			unlistenOpenInMainWindow();
 		};
 	});
 </script>
 
+<svelte:head>
+	<title>{$WEBUI_NAME}</title>
+</svelte:head>
 <Draggable />
 {#if loaded}
 	<slot />
+{/if}
+{#if IS_MAIN_WINDOW}
+	<Toaster
+		theme={$theme.includes('dark')
+			? 'dark'
+			: $theme === 'system'
+				? window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light'
+				: 'light'}
+		richColors
+		position="top-center"
+	/>
 {/if}

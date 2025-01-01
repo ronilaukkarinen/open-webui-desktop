@@ -1,4 +1,6 @@
 <script lang="ts">
+	import moveChatBar from '$lib/app/actions/move-chatbar';
+	import { setShortcut } from '$lib/app/commands/set-shortcut';
 	import { appConfig, appState, theme, WEBUI_NAME } from '$lib/stores';
 	import { applyTheme } from '$lib/utils';
 	import { type UnlistenFn } from '@tauri-apps/api/event';
@@ -6,11 +8,9 @@
 	import { register, unregister, type ShortcutEvent } from '@tauri-apps/plugin-global-shortcut';
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
-	import moveChatBar from '../../../app/actions/move-chatbar';
-	import { setShortcut } from '../../../app/commands/set-shortcut';
 
 	$: {
-		localStorage.setItem('theme', $theme);
+		localStorage.setItem('theme	', $theme);
 		console.log('App theme changed to', $theme);
 		applyTheme($theme);
 	}

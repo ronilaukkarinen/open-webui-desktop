@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { getCurrentWindow } from '@tauri-apps/api/window';
-	import { onMount, tick } from 'svelte';
-	import { CHATBAR_WINDOW_SIZE, COMPANION_CHAT_SIZE } from '../../../app/constants';
-	import moveChatBar from '../../../app/actions/move-chatbar';
+	import moveChatBar from '$lib/app/actions/move-chatbar';
+	import { CHATBAR_WINDOW_SIZE } from '$lib/app/constants';
 	import { appConfig } from '$lib/stores';
+	import { getCurrentWindow } from '@tauri-apps/api/window';
+	import { onMount } from 'svelte';
 
 	const window = getCurrentWindow();
 	let element: Element;

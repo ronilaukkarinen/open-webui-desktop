@@ -1,14 +1,14 @@
 <script lang="ts">
+	import moveChatBar from '$lib/app/actions/move-chatbar';
+	import { COMPANION_CHAT_SIZE } from '$lib/app/constants';
+	import i18n from '$lib/i18n';
+	import { appConfig } from '$lib/stores';
 	import { currentMonitor, getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 	import { onMount } from 'svelte';
-	import { COMPANION_CHAT_SIZE } from '../../../app/constants';
-	import moveChatBar from '../../../app/actions/move-chatbar';
-	import { appConfig } from '$lib/stores';
-	import XMark from '../icons/XMark.svelte';
-	import PencilSquare from '../icons/PencilSquare.svelte';
 	import Tooltip from '../common/Tooltip.svelte';
-	import i18n from '$lib/i18n';
 	import OpenInMainWindow from '../icons/OpenInMainWindow.svelte';
+	import PencilSquare from '../icons/PencilSquare.svelte';
+	import XMark from '../icons/XMark.svelte';
 
 	export let startNewChat: () => void | Promise<void> = () => {};
 	export let openInMainWindow: () => void | Promise<void> = () => {};

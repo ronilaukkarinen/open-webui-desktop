@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { setShortcut } from '$lib/app/commands/set-shortcut';
+	import type { ChatBarPosition, ResetChatTime } from '$lib/app/state';
 	import Switch from '$lib/components/common/Switch.svelte';
 	import { appConfig, WEBUI_BASE_URL } from '$lib/stores';
 	import { delay } from '$lib/utils';
@@ -9,8 +11,6 @@
 	import { createEventDispatcher, getContext, onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import type { Writable } from 'svelte/store';
-	import { setShortcut } from '../../../../app/commands/set-shortcut';
-	import type { ChatBarPosition, ResetChatTime } from '../../../../app/state';
 	import ShortcutEntry from './DesktopApp/ShortcutEntry.svelte';
 
 	const BANNED_SHORTCUTS = [
@@ -138,7 +138,7 @@
 				<div class=" self-center text-xs font-medium">{$i18n.t('WebUI Base URL')}</div>
 				<div class="flex items-center relative">
 					<input
-						class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
+						class="text-right w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
 						type="text"
 						bind:value={webuiHostname}
 						placeholder="Enter Web UI Hostname"

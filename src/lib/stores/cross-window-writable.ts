@@ -1,8 +1,8 @@
+import { APP_STORE_FILE } from '$lib/app/constants';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { getStore, load, Store } from '@tauri-apps/plugin-store';
 import equal from 'fast-deep-equal';
 import { get, writable, type Writable } from 'svelte/store';
-import { APP_STORE_FILE } from '../../app/constants';
 
 export function crossWindowWritable<T>(
 	name: string,
@@ -47,6 +47,7 @@ export function crossWindowWritable<T>(
 				}
 				if (newValue === null) {
 					console.warn(`Store value changed to null for ${name}`);
+					return;
 				}
 				console.debug(`${name} value changed from`, currentValue, 'to', newValue);
 				currentValue = newValue;
@@ -65,6 +66,13 @@ export function crossWindowWritable<T>(
 	return {
 		set: (value: T) => {
 			if (!equal(currentValue, value)) {
+				if (value === undefined) {
+					console.warn('Store for', name, 'set to undefined, skipping update');
+					return;
+				} else if (value === null) {
+					console.warn('Store for', name, 'set to null');
+				}
+
 				currentValue = value;
 				wrappedStore.set(value);
 
@@ -82,6 +90,13 @@ export function crossWindowWritable<T>(
 		update: (updater: (value: T) => T) => {
 			const newValue = updater(currentValue);
 			if (!equal(currentValue, newValue)) {
+				if (newValue === undefined) {
+					console.warn('Store for', name, 'set to undefined, skipping update');
+					return;
+				} else if (newValue === null) {
+					console.warn('Store for', name, 'set to null');
+				}
+
 				currentValue = newValue;
 				wrappedStore.set(newValue);
 

@@ -1,9 +1,9 @@
 import type { ModelConfig } from '$lib/apis';
+import { DEFAULT_CONFIG, DEFAULT_STATE } from '$lib/app/constants';
 import { APP_NAME } from '$lib/constants';
 import type { Banner } from '$lib/types';
 import type { Socket } from 'socket.io-client';
 import { derived, type Writable, writable } from 'svelte/store';
-import { DEFAULT_CONFIG, DEFAULT_STATE } from '../../app/constants';
 import { crossWindowWritable } from './cross-window-writable';
 
 // Backend
@@ -12,16 +12,11 @@ export const config = crossWindowWritable<Config>('config', undefined);
 export const user = crossWindowWritable<SessionUser>('user', undefined);
 
 // Desktop app
-// export const WEBUI_HOSTNAME = writable('localhost:8080');
 export const WEBUI_BASE_URL = crossWindowWritable<string>(
 	'webui_hostname',
 	'http://localhost:8080',
-	false
+	true
 );
-// export const WEBUI_BASE_URL = derived(
-// 	WEBUI_HOSTNAME,
-// 	($WEBUI_HOSTNAME) => `http://${$WEBUI_HOSTNAME}`
-// );
 export const WEBUI_API_BASE_URL = derived(
 	WEBUI_BASE_URL,
 	($WEBUI_BASE_URL) => `${$WEBUI_BASE_URL}/api/v1`

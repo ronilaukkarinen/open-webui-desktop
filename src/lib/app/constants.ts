@@ -5,6 +5,7 @@ import type { AppConfig, AppState } from './state';
 export const APP_STORE_FILE = 'stores.json';
 
 // window labels
+export const MAIN_WINDOW_LABEL = 'main';
 export const CHATBAR_WINDOW_LABEL = 'chatbar';
 
 // window sizes

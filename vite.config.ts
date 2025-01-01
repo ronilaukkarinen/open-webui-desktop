@@ -2,7 +2,8 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig, type UserConfig } from 'vite';
 
 // // @ts-expect-error process is a nodejs global
-const host = process.env.TAURI_DEV_HOST;
+const host = process.env.TAURI_DEV_HOST || 'localhost';
+console.log('TAURI_DEV_HOST', host);
 
 // https://vitejs.dev/config/
 export default defineConfig(

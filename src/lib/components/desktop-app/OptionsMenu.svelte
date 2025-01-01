@@ -532,7 +532,7 @@
 					class="flex gap-2 justify-between items-center px-3 py-2 text-sm  font-medium cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  rounded-xl"
 					on:click={async () => {
 						$temporaryChatEnabled = !$temporaryChatEnabled;
-						await goto('/desktop-app/chatbar');
+						await goto('/chatbar');
 						const newChatButton = document.getElementById('new-chat-button');
 						setTimeout(() => {
 							newChatButton?.click();

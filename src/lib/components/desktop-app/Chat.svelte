@@ -70,8 +70,8 @@
 	import { emitTo, listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { toast } from 'svelte-sonner';
-	import reopenMainWindow from '../../../app/actions/reopen-main-window';
-	import { COMPANION_CHAT_EXPIRED, OPEN_IN_MAIN_WINDOW } from '../../../app/constants';
+	import reopenMainWindow from '$lib/app/actions/reopen-main-window';
+	import { COMPANION_CHAT_EXPIRED, OPEN_IN_MAIN_WINDOW } from '$lib/app/constants';
 	import Messages from '../chat/Messages.svelte';
 	import ChatbarWrapper from './ChatbarWrapper.svelte';
 	import CompanionChatWrapper from './CompanionChatWrapper.svelte';
@@ -146,7 +146,7 @@
 				const chatInput = document.getElementById('chat-input');
 				chatInput?.focus();
 			} else {
-				await goto('/desktop-app/chatbar');
+				await goto('/chatbar');
 			}
 		})();
 	}
@@ -355,7 +355,7 @@
 				});
 			} else {
 				if ($temporaryChatEnabled) {
-					await goto('/desktop-app/chatbar');
+					await goto('/chatbar');
 				}
 			}
 
@@ -610,7 +610,7 @@
 	const loadChat = async () => {
 		chatId.set(chatIdProp);
 		chat = await getChatById(localStorage.token, $chatId).catch(async (error) => {
-			await goto('/desktop-app/chatbar');
+			await goto('/chatbar');
 			return null;
 		});
 
