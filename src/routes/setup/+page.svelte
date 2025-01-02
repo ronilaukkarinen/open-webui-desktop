@@ -1,16 +1,39 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { WEBUI_BASE_URL } from '$lib/stores';
+	import { onMount } from 'svelte';
 
-	console.log('On setup page');
+	console.debug('On setup page');
 
 	let baseUrl = '';
-	const onKeyDown = (e: KeyboardEvent) => {
+	const onKeyDown = async (e: KeyboardEvent) => {
 		if (e.key === 'Enter') {
-			WEBUI_BASE_URL.set(baseUrl);
-			goto('/');
+			revealSplashScreen();
+			$WEBUI_BASE_URL = baseUrl;
 		}
 	};
+
+	$: if ($WEBUI_BASE_URL) {
+		goto('/', { invalidateAll: true, replaceState: true });
+	}
+
+	let splashScreen: HTMLElement | null;
+	// Function to reveal the splash screen later
+	const revealSplashScreen = () => {
+		if (splashScreen) {
+			splashScreen.style.display = ''; // Reset display to original
+			splashScreen.dataset.visible = 'true'; // Update visibility state
+		}
+	};
+
+	onMount(() => {
+		// Hide splash screen, since we haven't loaded yet we'll need to put it back later
+		splashScreen = document.getElementById('splash-screen');
+		if (splashScreen) {
+			splashScreen.style.display = 'none'; // Hide the element
+			splashScreen.dataset.visible = 'false'; // Store visibility state
+		}
+	});
 </script>
 
 <div class="flex flex-col items-center justify-center min-h-screen p-8 space-y-8">

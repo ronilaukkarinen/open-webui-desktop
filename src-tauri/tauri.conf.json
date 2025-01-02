@@ -30,7 +30,7 @@
 			{
 				"label": "chatbar",
 				"title": "Chatbar",
-				"url": "/chatbar",
+				"url": "/",
 				"width": 600,
 				"height": 400,
 				"visible": false,
