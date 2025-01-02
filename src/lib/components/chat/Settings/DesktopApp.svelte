@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { setShortcut } from '$lib/app/commands/set-shortcut';
 	import type { ChatBarPosition, ResetChatTime } from '$lib/app/state';
+	import ConfirmDialog from '$lib/components/common/ConfirmDialog.svelte';
 	import Switch from '$lib/components/common/Switch.svelte';
 	import { appConfig, WEBUI_BASE_URL } from '$lib/stores';
 	import { delay } from '$lib/utils';
+	import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 	import * as autoStart from '@tauri-apps/plugin-autostart';
 	import { isRegistered, unregister } from '@tauri-apps/plugin-global-shortcut';
 	import type { i18n as i18nT } from 'i18next';
@@ -70,8 +71,18 @@
 	let openLinksInApp: boolean;
 	const openLinksInAppChangeHandler = () => {};
 
-	let webuiHostname: string;
-	const webuiHostnameChangeHandler = () => {};
+	let showConfirmDialog = false;
+
+	const webUIBaseURLChangeHandler = async () => {
+		console.log('Changing webui base url');
+		showConfirmDialog = true;
+	};
+
+	const handleConfirm = async () => {
+		await getCurrentWebviewWindow().clearAllBrowsingData();
+		$WEBUI_BASE_URL = '';
+		window.location.href = '/setup';
+	};
 
 	const saveConfig = async () => {
 		console.debug('Saving settings. Before:', Object.entries($appConfig));
@@ -112,10 +123,6 @@
 
 		console.debug('After:', $appConfig);
 		dispatch('save');
-
-		await delay(100);
-		$WEBUI_BASE_URL = webuiHostname;
-		await goto('/');
 	};
 
 	onMount(async () => {
@@ -125,7 +132,6 @@
 		openNewChatsInCompanion = $appConfig.openChatsInCompanion ? 'true' : 'false';
 		launchAtLogin = await autoStart.isEnabled();
 		openLinksInApp = $appConfig.openLinksInApp;
-		webuiHostname = $WEBUI_BASE_URL;
 	});
 </script>
 
@@ -133,19 +139,6 @@
 	<div class="overflow-y-scroll max-h-[28rem] lg:max-h-full">
 		<div class="">
 			<div class=" mb-1 text-sm font-medium">{$i18n.t('Desktop App Settings')}</div>
-
-			<div class="flex w-full justify-between">
-				<div class=" self-center text-xs font-medium">{$i18n.t('WebUI Base URL')}</div>
-				<div class="flex items-center relative">
-					<input
-						class="text-right w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
-						type="text"
-						bind:value={webuiHostname}
-						placeholder="Enter Web UI Hostname"
-						on:input={webuiHostnameChangeHandler}
-					/>
-				</div>
-			</div>
 
 			<div class="flex w-full justify-between">
 				<div class=" self-center text-xs font-medium">{$i18n.t('Position on Screen')}</div>
@@ -230,6 +223,28 @@
 				</div>
 			</div>
 		</div>
+
+		<hr class=" dark:border-gray-850 my-3" />
+
+		<div class="flex w-full justify-between">
+			<div class="self-center text-xs font-medium">{$i18n.t('Change WebUI Base URL')}</div>
+			<div class="flex items-center relative">
+				<div class="relative flex items-center">
+					<input
+						type="text"
+						readonly
+						value={$WEBUI_BASE_URL}
+						class="text-xs px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none pr-24"
+					/>
+					<button
+						class="absolute right-1 flex text-xs items-center space-x-1 mr-1 px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition"
+						on:click={webUIBaseURLChangeHandler}
+					>
+						<div class="self-center font-medium line-clamp-1">{$i18n.t('Change')}</div>
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 	<div class="flex justify-end pt-3 text-sm font-medium">
 		<button
@@ -240,3 +255,10 @@
 		</button>
 	</div>
 </div>
+
+<ConfirmDialog
+	bind:show={showConfirmDialog}
+	title="Change Open WebUI Base URL"
+	message="Are you sure you want to change the Open WebUI base URL?"
+	onConfirm={handleConfirm}
+/>

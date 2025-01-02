@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { APP_STORE_FILE } from '$lib/app/constants';
 	import { WEBUI_BASE_URL } from '$lib/stores';
+	import { getStore } from '@tauri-apps/plugin-store';
 	import { onMount } from 'svelte';
 
 	console.debug('On setup page');
@@ -14,7 +16,7 @@
 	};
 
 	$: if ($WEBUI_BASE_URL) {
-		goto('/', { invalidateAll: true, replaceState: true });
+		goto('/', { replaceState: true });
 	}
 
 	let splashScreen: HTMLElement | null;
@@ -26,7 +28,16 @@
 		}
 	};
 
-	onMount(() => {
+	onMount(async () => {
+		console.log('SETUP PAGE MOUNTED');
+		const store = await getStore(APP_STORE_FILE);
+		for (const key of (await store?.keys()) || []) {
+			if (key !== 'app_config' && key !== 'webui_base_url') {
+				await store?.delete(key);
+			}
+		}
+		await store?.save();
+		console.log(await store?.entries());
 		// Hide splash screen, since we haven't loaded yet we'll need to put it back later
 		splashScreen = document.getElementById('splash-screen');
 		if (splashScreen) {

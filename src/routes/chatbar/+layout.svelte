@@ -10,7 +10,7 @@
 	import { Toaster } from 'svelte-sonner';
 
 	$: {
-		localStorage.setItem('theme	', $theme);
+		localStorage.setItem('theme', $theme);
 		console.log('App theme changed to', $theme);
 		applyTheme($theme);
 	}

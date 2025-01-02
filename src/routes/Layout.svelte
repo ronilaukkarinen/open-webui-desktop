@@ -28,50 +28,10 @@
 	import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { unregisterAll } from '@tauri-apps/plugin-global-shortcut';
-	import { debug, error, info, warn } from '@tauri-apps/plugin-log';
 	import { io } from 'socket.io-client';
 	import { onMount, setContext, tick } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
 	import { spring } from 'svelte/motion';
-
-	// For debug purposes!
-	const routeLoggingToTauriConsole = async () => {
-		// @ts-expect-error patched doesn't exist on console but this is for debugging anyway
-		if (console.patched === true) {
-			console.debug('Tauri console already patched');
-			return;
-		}
-
-		// @ts-expect-error patched doesn't exist on console but this is for debugging anyway
-		console.patched = true;
-		const _debug = console.debug;
-		const _log = console.log;
-		const _warn = console.warn;
-		const _error = console.error;
-		console.debug = (...data) => {
-			_debug(...data);
-			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
-			debug(str);
-		};
-
-		console.log = (...data) => {
-			_log(...data);
-			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
-			info(str);
-		};
-
-		console.warn = (...data) => {
-			_warn(...data);
-			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
-			warn(str);
-		};
-
-		console.error = (...data) => {
-			_error(...data);
-			const str = `[${getCurrentWindow().label}] ${data.map((d) => JSON.stringify(d)).join(', ')}`;
-			error(str);
-		};
-	};
 
 	let loadingProgress = spring(0, {
 		stiffness: 0.05
@@ -146,9 +106,6 @@
 		let unlistenReopen: UnlistenFn;
 		let unlistenOpenInMainWindow: UnlistenFn;
 		(async () => {
-			// makes all console logs go to tauri dev console
-			await routeLoggingToTauriConsole();
-
 			console.log('Waiting 100ms for cross window stores to load...');
 			await delay(100);
 			console.log('They should be loaded now!');
