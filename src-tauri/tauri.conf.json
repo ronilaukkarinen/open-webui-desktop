@@ -45,7 +45,7 @@
 			}
 		],
 		"security": {
-			"csp": "default-src 'self'; connect-src 'self' ws: wss: http: https:;"
+			"csp": null
 		}
 	},
 	"bundle": {

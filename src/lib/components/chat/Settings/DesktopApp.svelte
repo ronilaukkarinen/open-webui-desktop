@@ -234,10 +234,10 @@
 						type="text"
 						readonly
 						value={$WEBUI_BASE_URL}
-						class="text-xs px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 dark:text-gray-200 focus:outline-none pr-24"
+						class="text-xs px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-850 dark:text-gray-200 focus:outline-none pr-24"
 					/>
 					<button
-						class="absolute right-1 flex text-xs items-center space-x-1 mr-1 px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 transition"
+						class="absolute right-1 flex text-xs items-center space-x-1 mr-1 px-3 py-1 rounded-lg bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200 transition"
 						on:click={webUIBaseURLChangeHandler}
 					>
 						<div class="self-center font-medium line-clamp-1">{$i18n.t('Change')}</div>
