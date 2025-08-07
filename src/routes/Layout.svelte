@@ -48,49 +48,93 @@
 	$: console.log('WEBUI_BASE_URL changed', $WEBUI_BASE_URL);
 
 	const setupSocket = () => {
-		const _socket = io(`${$WEBUI_BASE_URL}` || undefined, {
-			reconnection: true,
-			reconnectionDelay: 1000,
-			reconnectionDelayMax: 5000,
-			randomizationFactor: 0.5,
-			path: '/ws/socket.io',
-			auth: { token: localStorage.token }
-		});
+		let _socket;
+		let connectionAttempts = 0;
+		const maxAttempts = 3;
+		const socketPaths = ['/ws/socket.io', '/socket.io', '/api/socket.io'];
 
-		socket.set(_socket);
-
-		_socket.on('connect_error', (err) => {
-			console.log('connect_error', err);
-		});
-
-		_socket.on('connect', () => {
-			console.log('connected', _socket.id);
-		});
-
-		_socket.on('reconnect_attempt', (attempt) => {
-			console.log('reconnect_attempt', attempt);
-		});
-
-		_socket.on('reconnect_failed', () => {
-			console.log('reconnect_failed');
-		});
-
-		_socket.on('disconnect', (reason, details) => {
-			console.log(`Socket ${_socket.id} disconnected due to ${reason}`);
-			if (details) {
-				console.log('Additional details:', details);
+		const tryConnection = (pathIndex = 0) => {
+			if (pathIndex >= socketPaths.length || connectionAttempts >= maxAttempts) {
+				console.warn('All socket connection attempts failed. App will continue without real-time features.');
+				// Set a null socket to prevent further connection attempts
+				socket.set(null);
+				return;
 			}
-		});
 
-		_socket.on('user-count', (data) => {
-			console.log('user-count', data);
-			activeUserCount.set(data.count);
-		});
+			const currentPath = socketPaths[pathIndex];
+			console.log(`Attempting socket connection with path: ${currentPath}`);
+			
+			_socket = io(`${$WEBUI_BASE_URL}` || undefined, {
+				reconnection: pathIndex === 0, // Only auto-reconnect on first attempt
+				reconnectionDelay: 1000,
+				reconnectionDelayMax: 5000,
+				randomizationFactor: 0.5,
+				path: currentPath,
+				transports: ['websocket', 'polling'],
+				forceNew: true,
+				timeout: 10000,
+				auth: { token: localStorage.token || '' },
+				extraHeaders: localStorage.token ? {
+					'Authorization': `Bearer ${localStorage.token}`
+				} : {}
+			});
 
-		_socket.on('usage', (data) => {
-			console.log('usage', data);
-			USAGE_POOL.set(data['models']);
-		});
+			socket.set(_socket);
+			connectionAttempts++;
+
+			_socket.on('connect_error', (err) => {
+				console.error(`Socket connection error (path: ${currentPath}):`, err);
+				console.log('Connection details:', {
+					url: $WEBUI_BASE_URL,
+					path: currentPath,
+					transport: err.transport,
+					type: err.type,
+					message: err.message,
+					attempt: connectionAttempts
+				});
+				
+				// Clean up current socket before trying next path
+				_socket.disconnect();
+				_socket.removeAllListeners();
+				
+				// Try next path after a short delay
+				setTimeout(() => {
+					tryConnection(pathIndex + 1);
+				}, 1000);
+			});
+
+			_socket.on('connect', () => {
+				console.log(`Successfully connected via path: ${currentPath}`, _socket.id);
+			});
+
+			_socket.on('reconnect_attempt', (attempt) => {
+				console.log('reconnect_attempt', attempt);
+			});
+
+			_socket.on('reconnect_failed', () => {
+				console.log('reconnect_failed');
+			});
+
+			_socket.on('disconnect', (reason, details) => {
+				console.log(`Socket ${_socket.id} disconnected due to ${reason}`);
+				if (details) {
+					console.log('Additional details:', details);
+				}
+			});
+
+			_socket.on('user-count', (data) => {
+				console.log('user-count', data);
+				activeUserCount.set(data.count);
+			});
+
+			_socket.on('usage', (data) => {
+				console.log('usage', data);
+				USAGE_POOL.set(data['models']);
+			});
+		};
+
+		// Start connection attempt
+		tryConnection();
 	};
 
 	onMount(() => {
