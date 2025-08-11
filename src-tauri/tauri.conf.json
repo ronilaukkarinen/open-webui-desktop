@@ -9,20 +9,8 @@
 		"beforeBuildCommand": "pnpm run build",
 		"frontendDist": "../build"
 	},
-	"plugins": {
-		"log": {},
-		"store": {},
-		"opener": {},
-		"autostart": {},
-		"globalShortcut": {},
-		"singleInstance": {}
-	},
 	"app": {
 		"macOSPrivateApi": true,
-		"trayIcon": {
-			"iconPath": "icons/icon.png",
-			"iconAsTemplate": true
-		},
 		"windows": [
 			{
 				"label": "main",

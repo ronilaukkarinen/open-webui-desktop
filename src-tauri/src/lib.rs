@@ -14,7 +14,6 @@ pub fn run() {
             // Handle single instance
         }))
         .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_nspanel::init())
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(move |app_handle, event| match event {
