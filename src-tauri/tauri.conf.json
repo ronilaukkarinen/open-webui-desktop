@@ -13,7 +13,6 @@
 		"log": {},
 		"store": {},
 		"opener": {},
-		"event": {},
 		"autostart": {},
 		"globalShortcut": {},
 		"singleInstance": {}

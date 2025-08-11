@@ -299,10 +299,22 @@
 			await unregisterAll();
 
 			// Unlisten to Reopen event
-			unlistenReopen();
+			if (unlistenReopen) {
+				try {
+					unlistenReopen();
+				} catch (error) {
+					console.warn('Error cleaning up reopen listener:', error);
+				}
+			}
 
 			// Unlisten to Open in Main Window event
-			unlistenOpenInMainWindow();
+			if (unlistenOpenInMainWindow) {
+				try {
+					unlistenOpenInMainWindow();
+				} catch (error) {
+					console.warn('Error cleaning up open in main window listener:', error);
+				}
+			}
 		};
 	});
 </script>

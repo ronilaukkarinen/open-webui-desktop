@@ -47,7 +47,13 @@
 		})();
 
 		return () => {
-			unlistenFocusChange();
+			if (unlistenFocusChange) {
+				try {
+					unlistenFocusChange();
+				} catch (error) {
+					console.warn('Error cleaning up focus change listener:', error);
+				}
+			}
 		};
 	});
 
