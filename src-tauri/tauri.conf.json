@@ -20,6 +20,10 @@
 	},
 	"app": {
 		"macOSPrivateApi": true,
+		"trayIcon": {
+			"iconPath": "icons/icon.png",
+			"iconAsTemplate": true
+		},
 		"windows": [
 			{
 				"label": "main",
@@ -34,7 +38,9 @@
 				"titleBarStyle": "Overlay",
 				"hiddenTitle": true,
 				"resizable": true,
-				"minimizable": true
+				"minimizable": true,
+				"closable": true,
+				"dragDropEnabled": false
 			},
 			{
 				"label": "chatbar",
