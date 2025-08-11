@@ -11,6 +11,9 @@ pub fn run() {
         ))
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_global_shortcut::Builder::default().build())
+        .plugin(tauri_plugin_single_instance::init(|_app, _argv, _cwd| {
+            // Handle single instance
+        }))
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_nspanel::init())
         .build(tauri::generate_context!())
