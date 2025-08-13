@@ -284,6 +284,12 @@ export const updateUserInfo = async (token: string, info: object) => {
 };
 
 export const getAndUpdateUserLocation = async (token: string) => {
+	// Disable location access in Tauri environment to avoid ZoneInfo timezone errors
+	if (typeof window !== 'undefined' && window.__TAURI__) {
+		console.log('Tauri environment detected - disabling user location to avoid timezone errors');
+		return undefined;
+	}
+	
 	const location = await getUserPosition().catch((err) => {
 		throw err;
 	});
