@@ -1,4 +1,4 @@
-use tauri::{Emitter, RunEvent};
+use tauri::{Emitter, RunEvent, WindowEvent};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -14,6 +14,15 @@ pub fn run() {
             // Handle single instance
         }))
         .plugin(tauri_plugin_opener::init())
+        .on_window_event(|window, event| {
+            match event {
+                WindowEvent::CloseRequested { .. } => {
+                    // Allow the window to close normally
+                    println!("Window close requested for: {}", window.label());
+                }
+                _ => {}
+            }
+        })
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         .run(move |app_handle, event| match event {
