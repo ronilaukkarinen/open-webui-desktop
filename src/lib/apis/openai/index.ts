@@ -282,6 +282,23 @@ export const generateOpenAIChatCompletion = async (
 	const controller = new AbortController();
 	let error = null;
 
+	// Debug logging for Tauri to inspect request body
+	if (typeof window !== 'undefined' && window.__TAURI__) {
+		const bodyStr = JSON.stringify(body, null, 2);
+		console.log('=== FULL TAURI REQUEST BODY ===');
+		console.log(bodyStr);
+		console.log('=== END REQUEST BODY ===');
+		console.log('OpenAI API request summary:', {
+			url: `${url}/chat/completions`,
+			bodySize: bodyStr.length,
+			hasMessages: 'messages' in body,
+			messageCount: Array.isArray(body.messages) ? body.messages.length : 'N/A',
+			containsTimezone: bodyStr.toLowerCase().includes('timezone'),
+			containsZoneInfo: bodyStr.toLowerCase().includes('zoneinfo'),
+			sessionId: body.session_id
+		});
+	}
+
 	const res = await fetch(`${url}/chat/completions`, {
 		signal: controller.signal,
 		method: 'POST',
@@ -291,7 +308,16 @@ export const generateOpenAIChatCompletion = async (
 		},
 		body: JSON.stringify(body)
 	}).catch((err) => {
-		console.log(err);
+		console.log('OpenAI API fetch error:', err);
+		// Enhanced error logging for Tauri to capture ZoneInfo errors
+		if (typeof window !== 'undefined' && window.__TAURI__) {
+			console.log('Tauri-specific error details:', {
+				errorType: typeof err,
+				errorMessage: err?.message,
+				errorStack: err?.stack,
+				isZoneInfoError: err?.message?.includes('ZoneInfo') || err?.message?.includes('timezone')
+			});
+		}
 		error = err;
 		return null;
 	});

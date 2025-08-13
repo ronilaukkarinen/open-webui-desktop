@@ -869,6 +869,20 @@
 
 	const submitPrompt = async (userPrompt, { _raw = false } = {}) => {
 		console.log('submitPrompt', userPrompt, $chatId);
+		
+		// Debug logging for Tauri environment at very start
+		if (typeof window !== 'undefined' && window.__TAURI__) {
+			console.log('=== TAURI SUBMIT PROMPT DEBUG ===');
+			console.log('User agent:', navigator.userAgent);
+			console.log('Timezone (Intl):', Intl.DateTimeFormat().resolvedOptions().timeZone);
+			console.log('Timezone offset:', new Date().getTimezoneOffset());
+			console.log('Date string:', new Date().toString());
+			console.log('Locale:', navigator.language);
+			console.log('Settings userLocation enabled:', $settings?.userLocation);
+			console.log('Current WebUI base URL:', $WEBUI_BASE_URL);
+			console.log('Socket ID:', $socket?.id);
+			console.log('=== END TAURI SUBMIT DEBUG ===');
+		}
 
 		$appState = { ...$appState, lastChatTime: Date.now() };
 
@@ -1505,6 +1519,17 @@
 
 	const sendPromptOpenAI = async (model, userPrompt, responseMessageId, _chatId) => {
 		let _response = null;
+
+		// Debug logging for Tauri environment
+		if (typeof window !== 'undefined' && window.__TAURI__) {
+			console.log('=== TAURI sendPromptOpenAI START ===');
+			console.log('Model:', model);
+			console.log('User prompt:', userPrompt);
+			console.log('Settings userLocation:', $settings?.userLocation);
+			console.log('Current timezone via Intl:', Intl.DateTimeFormat().resolvedOptions().timeZone);
+			console.log('Date toString:', new Date().toString());
+			console.log('=== END TAURI DEBUG ===');
+		}
 
 		const responseMessage = history.messages[responseMessageId];
 		const userMessage = history.messages[responseMessage.parentId];

@@ -666,6 +666,17 @@ export const promptTemplate = (
 	user_name?: string,
 	user_location?: string
 ): string => {
+	// Debug logging for Tauri environment
+	if (typeof window !== 'undefined' && window.__TAURI__) {
+		console.log('promptTemplate called in Tauri with:', { 
+			templatePreview: template.substring(0, 100) + '...', 
+			user_name, 
+			user_location,
+			hasCurrentTimezone: template.includes('{{CURRENT_TIMEZONE}}'),
+			hasCurrentDatetime: template.includes('{{CURRENT_DATETIME}}'),
+			templateLength: template.length
+		});
+	}
 	// Get the current date
 	const currentDate = new Date();
 
@@ -678,19 +689,33 @@ export const promptTemplate = (
 		String(currentDate.getDate()).padStart(2, '0');
 
 	// Format the time to HH:MM:SS AM/PM
-	const currentTime = currentDate.toLocaleTimeString('en-US', {
-		hour: 'numeric',
-		minute: 'numeric',
-		second: 'numeric',
-		hour12: true
-	});
+	// In Tauri environment, use manual formatting to avoid timezone issues
+	let currentTime;
+	if (typeof window !== 'undefined' && window.__TAURI__) {
+		const hours = currentDate.getHours();
+		const minutes = currentDate.getMinutes();
+		const seconds = currentDate.getSeconds();
+		const ampm = hours >= 12 ? 'PM' : 'AM';
+		const hours12 = hours % 12 || 12;
+		currentTime = `${hours12}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${ampm}`;
+		console.log('Using manual time formatting in Tauri:', currentTime);
+	} else {
+		currentTime = currentDate.toLocaleTimeString('en-US', {
+			hour: 'numeric',
+			minute: 'numeric',
+			second: 'numeric',
+			hour12: true
+		});
+	}
 
 	// Get the current weekday
 	const currentWeekday = getWeekday();
 
 	// Get the user's timezone - hardcoded to avoid any potential issues
 	const currentTimezone = 'UTC';
-	console.log('promptTemplate using hardcoded timezone:', currentTimezone);
+	if (typeof window !== 'undefined' && window.__TAURI__) {
+		console.log('promptTemplate using hardcoded timezone for Tauri:', currentTimezone);
+	}
 
 	// Get the user's language
 	const userLanguage = localStorage.getItem('locale') || 'en-US';
@@ -722,6 +747,15 @@ export const promptTemplate = (
 	if (user_location) {
 		// Replace {{USER_LOCATION}} in the template with the current location
 		template = template.replace('{{USER_LOCATION}}', user_location);
+	}
+
+	// Final debug logging for Tauri
+	if (typeof window !== 'undefined' && window.__TAURI__) {
+		console.log('promptTemplate final result in Tauri:', { 
+			finalTemplate: template.substring(0, 200) + (template.length > 200 ? '...' : ''),
+			finalLength: template.length,
+			containsAnyTimezoneRefs: template.includes('timezone') || template.includes('Timezone') || template.includes('TIMEZONE')
+		});
 	}
 
 	return template;
