@@ -890,46 +890,10 @@ export const getCurrentDateTime = () => {
 	return `${getFormattedDate()} ${getFormattedTime()}`;
 };
 
-// Get the user's timezone - guaranteed to never return empty string
+// Get the user's timezone - always returns UTC to avoid ZoneInfo errors in Tauri
 export const getUserTimezone = () => {
-	const FALLBACK_TIMEZONE = 'UTC';
-	console.log('getUserTimezone called');
-	
-	try {
-		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		console.log('Raw timezone from Intl.DateTimeFormat:', JSON.stringify(timezone), 'type:', typeof timezone, 'length:', timezone?.length);
-		
-		// Validate that we got a proper timezone string
-		if (timezone && typeof timezone === 'string' && timezone.trim() !== '') {
-			const cleanTimezone = timezone.trim();
-			console.log('Clean timezone:', JSON.stringify(cleanTimezone));
-			
-			// Check if it's a valid timezone format (contains slash or is a known abbreviation)
-			if (cleanTimezone.includes('/') || ['UTC', 'GMT'].includes(cleanTimezone.toUpperCase())) {
-				console.log('Valid timezone detected:', cleanTimezone);
-				return cleanTimezone;
-			} else {
-				// If we got a string but it doesn't match expected patterns, try to map it
-				console.error('Unusual timezone format detected, falling back to UTC. Raw value:', JSON.stringify(timezone));
-			}
-		} else {
-			console.error('Empty or invalid timezone detected. Raw value:', JSON.stringify(timezone), 'type:', typeof timezone);
-		}
-	} catch (error) {
-		console.error('Failed to get timezone from Intl.DateTimeFormat:', error);
-	}
-	
-	// Always return UTC as fallback - this should never be empty or invalid
-	console.log('Returning fallback timezone:', FALLBACK_TIMEZONE);
-	
-	// Double-check that we're never returning empty/null/undefined
-	const result = FALLBACK_TIMEZONE;
-	if (!result || typeof result !== 'string' || result.trim() === '') {
-		console.error('CRITICAL: Fallback timezone is invalid, using hardcoded UTC');
-		return 'UTC';
-	}
-	
-	return result;
+	console.log('getUserTimezone called - returning hardcoded UTC for Tauri compatibility');
+	return 'UTC';
 };
 
 // Get the weekday
