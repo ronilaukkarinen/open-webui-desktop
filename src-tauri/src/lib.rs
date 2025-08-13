@@ -21,11 +21,7 @@ pub fn run() {
                     
                     // For main window, close the entire app
                     if window.label() == "main" {
-                        // Unregister all global shortcuts before closing
-                        if let Ok(global_shortcut) = window.app_handle().state::<tauri_plugin_global_shortcut::GlobalShortcutManager>() {
-                            let _ = global_shortcut.unregister_all();
-                        }
-                        
+                        println!("Closing main window and exiting app");
                         let app = window.app_handle();
                         app.exit(0);
                     } else {
