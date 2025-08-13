@@ -54,7 +54,7 @@ export function crossWindowWritable<T>(
 				wrappedStore.set(newValue);
 			});
 
-			getCurrentWindow().once('tauri://close-requested', unlistener);
+			// Store cleanup handled by window close event in Rust backend
 
 			return store;
 		} catch (e) {

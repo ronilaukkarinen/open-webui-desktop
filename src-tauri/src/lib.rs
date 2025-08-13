@@ -1,4 +1,4 @@
-use tauri::{Emitter, RunEvent, WindowEvent};
+use tauri::{Emitter, RunEvent, WindowEvent, Manager};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -16,9 +16,24 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .on_window_event(|window, event| {
             match event {
-                WindowEvent::CloseRequested { .. } => {
-                    // Allow the window to close normally
+                WindowEvent::CloseRequested { api, .. } => {
                     println!("Window close requested for: {}", window.label());
+                    
+                    // For main window, close the entire app
+                    if window.label() == "main" {
+                        // Unregister all global shortcuts before closing
+                        if let Ok(global_shortcut) = window.app_handle().state::<tauri_plugin_global_shortcut::GlobalShortcutManager>() {
+                            let _ = global_shortcut.unregister_all();
+                        }
+                        
+                        let app = window.app_handle();
+                        app.exit(0);
+                    } else {
+                        // For other windows, just hide them
+                        let _ = window.hide();
+                    }
+                    // Prevent the default close behavior since we're handling it
+                    api.prevent_close();
                 }
                 _ => {}
             }
