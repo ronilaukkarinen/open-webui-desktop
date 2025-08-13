@@ -36,7 +36,7 @@
 <div class="w-full h-full flex flex-col items-center justify-end">
 	<div
 		class="w-[440px] min-h-[85px] p-3 py-5 text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900 flex flex-col items-center justify-center rounded-3xl"
-		data-tauri-drag-region
+		
 		bind:this={element}
 	>
 		<slot />

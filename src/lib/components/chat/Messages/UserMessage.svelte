@@ -208,7 +208,6 @@
 				<div class="w-full">
 					<div
 						class="flex {($settings?.chatBubble ?? true) ? 'justify-end pb-1' : 'w-full'}"
-						data-tauri-drag-region
 					>
 						<div
 							class="rounded-3xl {($settings?.chatBubble ?? true)
@@ -227,7 +226,6 @@
 						class=" flex {($settings?.chatBubble ?? true)
 							? 'justify-end'
 							: ''}  text-gray-600 dark:text-gray-500"
-						data-tauri-drag-region
 					>
 						{#if !($settings?.chatBubble ?? true)}
 							{#if siblings.length > 1}

@@ -105,7 +105,9 @@
 		}
 
 		if (command.content.includes('{{CURRENT_TIMEZONE}}')) {
-			const timezone = getUserTimezone();
+			const timezone = 'UTC';
+			console.log('Command prompt using hardcoded timezone:', timezone);
+			// Hardcoded to UTC to avoid any timezone issues
 			text = text.replaceAll('{{CURRENT_TIMEZONE}}', timezone);
 		}
 

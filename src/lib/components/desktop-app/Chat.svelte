@@ -701,7 +701,7 @@
 				...(m.sources ? { sources: m.sources } : {})
 			})),
 			chat_id: chatId,
-			session_id: $socket?.id,
+			session_id: $socket?.id || uuidv4(),
 			id: responseMessageId
 		}).catch((error) => {
 			toast.error(error);
@@ -756,7 +756,7 @@
 			})),
 			...(event ? { event: event } : {}),
 			chat_id: chatId,
-			session_id: $socket?.id,
+			session_id: $socket?.id || uuidv4(),
 			id: responseMessageId
 		}).catch((error) => {
 			toast.error(error);
@@ -1263,7 +1263,7 @@
 			keep_alive: $settings.keepAlive ?? undefined,
 			tool_ids: selectedToolIds.length > 0 ? selectedToolIds : undefined,
 			files: files.length > 0 ? files : undefined,
-			session_id: $socket?.id,
+			session_id: $socket?.id || uuidv4(),
 			chat_id: $chatId,
 			id: responseMessageId
 		});
@@ -1643,7 +1643,7 @@
 					max_tokens: params?.max_tokens ?? $settings?.params?.max_tokens ?? undefined,
 					tool_ids: selectedToolIds.length > 0 ? selectedToolIds : undefined,
 					files: files.length > 0 ? files : undefined,
-					session_id: $socket?.id,
+					session_id: $socket?.id || uuidv4(),
 					chat_id: $chatId,
 					id: responseMessageId
 				},
@@ -2221,7 +2221,7 @@
 	{#if companionChatOpen}
 		<div
 			class=" pb-2.5 flex flex-col justify-between w-full flex-auto overflow-auto h-0 max-w-full z-10 scrollbar-hidden"
-			data-tauri-drag-region
+			
 			id="messages-container"
 			bind:this={messagesContainerElement}
 			on:scroll={(e) => {
@@ -2230,7 +2230,7 @@
 					messagesContainerElement.clientHeight + 5;
 			}}
 		>
-			<div class=" h-full w-full flex flex-col" data-tauri-drag-region>
+			<div class=" h-full w-full flex flex-col" >
 				<Messages
 					chatId={$chatId}
 					bind:history

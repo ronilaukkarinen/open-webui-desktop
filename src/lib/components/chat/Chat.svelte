@@ -670,7 +670,7 @@
 				...(m.sources ? { sources: m.sources } : {})
 			})),
 			chat_id: chatId,
-			session_id: $socket?.id,
+			session_id: $socket?.id || uuidv4(),
 			id: responseMessageId
 		}).catch((error) => {
 			toast.error(error);
@@ -725,7 +725,7 @@
 			})),
 			...(event ? { event: event } : {}),
 			chat_id: chatId,
-			session_id: $socket?.id,
+			session_id: $socket?.id || uuidv4(),
 			id: responseMessageId
 		}).catch((error) => {
 			toast.error(error);
@@ -1230,7 +1230,7 @@
 			keep_alive: $settings.keepAlive ?? undefined,
 			tool_ids: selectedToolIds.length > 0 ? selectedToolIds : undefined,
 			files: files.length > 0 ? files : undefined,
-			session_id: $socket?.id,
+			session_id: $socket?.id || uuidv4(),
 			chat_id: $chatId,
 			id: responseMessageId
 		});
@@ -1610,7 +1610,7 @@
 					max_tokens: params?.max_tokens ?? $settings?.params?.max_tokens ?? undefined,
 					tool_ids: selectedToolIds.length > 0 ? selectedToolIds : undefined,
 					files: files.length > 0 ? files : undefined,
-					session_id: $socket?.id,
+					session_id: $socket?.id || uuidv4(),
 					chat_id: $chatId,
 					id: responseMessageId
 				},

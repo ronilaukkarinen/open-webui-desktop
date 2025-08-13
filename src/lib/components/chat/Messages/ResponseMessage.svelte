@@ -476,11 +476,11 @@
 		class=" flex w-full message-{message.id}"
 		id="message-{message.id}"
 		dir={$settings.chatDirection}
-		data-tauri-drag-region
+		
 	>
 		<div
 			class={`flex-shrink-0 ${($settings?.chatDirection ?? 'LTR') === 'LTR' ? 'mr-3' : 'ml-3'}`}
-			data-tauri-drag-region
+			
 		>
 			<ProfileImage
 				src={model?.info?.meta?.profile_image_url ??
@@ -489,7 +489,7 @@
 			/>
 		</div>
 
-		<div class="flex-auto w-0 pl-1" data-tauri-drag-region>
+		<div class="flex-auto w-0 pl-1" >
 			<Name>
 				{model?.name ?? message.model}
 
@@ -682,7 +682,7 @@
 					{#if message.done || siblings.length > 1}
 						<div
 							class=" flex justify-start overflow-x-auto buttons text-gray-600 dark:text-gray-500 mt-0.5"
-							data-tauri-drag-region
+							
 						>
 							{#if siblings.length > 1}
 								<div class="flex self-center min-w-fit" dir="ltr">

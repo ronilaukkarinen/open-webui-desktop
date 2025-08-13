@@ -147,8 +147,8 @@
 			}
 		};
 
-		let unlistenReopen: UnlistenFn;
-		let unlistenOpenInMainWindow: UnlistenFn;
+		let unlistenReopen: UnlistenFn | null = null;
+		let unlistenOpenInMainWindow: UnlistenFn | null = null;
 		(async () => {
 			console.log('Waiting 100ms for cross window stores to load...');
 			await delay(100);

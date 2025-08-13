@@ -262,7 +262,7 @@
 <svelte:window on:keydown={handleKeyDown} />
 <FilesOverlay show={dragged} />
 {#if loaded}
-	<div class="w-full font-primary" data-tauri-drag-region>
+	<div class="w-full font-primary" >
 		<div class=" mx-auto inset-x-0 bg-transparent flex justify-center">
 			<div class="flex flex-col px-3 max-w-6xl w-full">
 				<div class="relative">
@@ -539,7 +539,7 @@
 									</div>
 								{/if}
 
-								<div class="flex" data-tauri-drag-region>
+								<div class="flex" >
 									<div class="ml-1 self-end mb-1.5 flex space-x-1">
 										<InputMenu
 											bind:webSearchEnabled
@@ -595,7 +595,7 @@
 										{#key placeholder}
 											<div
 												class="scrollbar-hidden text-left bg-transparent dark:text-gray-100 outline-none w-full py-2.5 px-1 rounded-xl resize-none h-fit max-h-80 overflow-auto"
-												data-tauri-drag-region
+												
 											>
 												<RichTextInput
 													bind:this={chatInputElement}
